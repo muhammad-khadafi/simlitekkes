@@ -1,0 +1,8 @@
+---
+# Project-wide GitLab CI/CD configuration
+stages:
+  - dependencies
+  - build
+  - deploy
+  - post-deploy
+  - static-analysis

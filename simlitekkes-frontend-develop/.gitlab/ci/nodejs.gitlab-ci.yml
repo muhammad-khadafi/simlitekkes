@@ -1,0 +1,45 @@
+---
+# Node.js-specific CI/CD jobs
+variables:
+  YARN_ARGS: --non-interactive --no-progress --network-timeout 120000 --prefer-offline
+
+.template-default-cache-paths: 
+  paths: &default-cache-paths
+    - node_modules/
+    - yarn.lock
+
+.base-build:
+  stage: build
+  image: node:10.19
+  cache:
+    key: "${CI_COMMIT_REF_SLUG}"
+    paths: *default-cache-paths
+    policy: pull-push
+  variables:
+    BUILD_MODE: development
+    VUE_APP_BACKEND: http://localhost:8001
+  before_script:
+    - yarn install ${YARN_ARGS}
+    - echo "VUE_APP_BACKEND_URL=${VUE_APP_BACKEND_URL}" > .env
+  script:
+    - yarn build --mode ${BUILD_MODE} ${YARN_ARGS}
+  artifacts:
+    paths:
+      - dist
+
+lint:
+  stage: pre-build
+  image: node:10.19
+  cache:
+    key: "${CI_COMMIT_REF_SLUG}"
+    paths: *default-cache-paths
+    policy: push
+  before_script:
+    - yarn ${YARN_ARGS} install
+  script:
+    - yarn ${YARN_ARGS} lint
+  only:
+    changes:
+      - "**/*.js"
+      - package.json
+  allow_failure: true

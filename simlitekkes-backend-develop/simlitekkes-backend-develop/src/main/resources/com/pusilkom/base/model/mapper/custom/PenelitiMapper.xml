@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.PenelitiMapper">
+    <resultMap id="PenelitiResultMap" type="com.pusilkom.base.dto.PenelitiDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="id_user" jdbcType="INTEGER" property="idUser" />
+        <result column="id_bidang_keahlian" jdbcType="INTEGER" property="idBidangKeahlian" />
+        <result column="id_organisasi" jdbcType="INTEGER" property="idOrganisasi" />
+        <result column="nama" jdbcType="VARCHAR" property="nama" />
+        <result column="nidn" jdbcType="VARCHAR" property="nidn" />
+        <result column="beban_review_maksimal" jdbcType="INTEGER" property="bebanReviewMaksimal" />
+        <result column="program_studi" jdbcType="VARCHAR" property="programStudi" />
+        <result column="jenjang_pendidikan_terakhir" jdbcType="VARCHAR" property="jenjangPendidikanTerakhir" />
+        <result column="jabatan_akademik_fungsional" jdbcType="VARCHAR" property="jabatanAkademikFungsional" />
+        <result column="gelar_depan" jdbcType="VARCHAR" property="gelarDepan" />
+        <result column="gelar_belakang" jdbcType="VARCHAR" property="gelarBelakang" />
+        <result column="tempat_lahir" jdbcType="VARCHAR" property="tempatLahir" />
+        <result column="tanggal_lahir" jdbcType="DATE" property="tanggalLahir" />
+        <result column="no_ktp" jdbcType="CHAR" property="noKtp" />
+        <result column="no_telp" jdbcType="VARCHAR" property="noTelp" />
+        <result column="no_hp" jdbcType="VARCHAR" property="noHp" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="website_personal" jdbcType="VARCHAR" property="websitePersonal" />
+        <result column="alamat" jdbcType="VARCHAR" property="alamat" />
+        <result column="last_sync_time" jdbcType="TIMESTAMP" property="lastSyncTime" />
+        <result column="is_active" jdbcType="BIT" property="isActive" />
+        <result column="jenis_kelamin" jdbcType="CHAR" property="jenisKelamin" />
+        <result column="sinta_id" jdbcType="INTEGER" property="sintaId" />
+        <result column="sinta_skor" jdbcType="INTEGER" property="sintaSkor" />
+        <result column="rank_in_national" jdbcType="INTEGER" property="rankInNational" />
+        <result column="rank_in_affiliation" jdbcType="INTEGER" property="rankInAffiliation" />
+        <result column="scopus_id" jdbcType="INTEGER" property="scopusId" />
+        <result column="h_index_sinta" jdbcType="SMALLINT" property="hIndexSinta" />
+        <result column="articles" jdbcType="INTEGER" property="articles" />
+        <result column="citation" jdbcType="INTEGER" property="citation" />
+        <result column="google_scholar_id" jdbcType="INTEGER" property="googleScholarId" />
+        <result column="h_index_gs" jdbcType="INTEGER" property="hIndexGs" />
+        <result column="articles_gs" jdbcType="INTEGER" property="articlesGs" />
+        <result column="isActiveStr" jdbcType="VARCHAR" property="isActiveStr" />
+        <result column="namaInstitusi" jdbcType="VARCHAR" property="namaInstitusi" />
+        <result column="namaBidang" jdbcType="VARCHAR" property="namaBidang" />
+        <result column="jenisKelaminStr" jdbcType="VARCHAR" property="jenisKelaminStr" />
+        <result column="foto" jdbcType="VARCHAR" property="foto" />
+        <result column="fotoName" jdbcType="VARCHAR" property="fotoName" />
+        <result column="peranPeneliti" jdbcType="VARCHAR" property="peranPeneliti" />
+        <result column="tugasPenelitian" jdbcType="VARCHAR" property="tugasPenelitian" />
+        <result column="is_trained" jdbcType="BIT" property="isTrained" />
+        <result column="nomor_sertifikasi" jdbcType="VARCHAR" property="nomorSertifikasi" />
+        <result column="is_poltekkes" jdbcType="BIT" property="isPoltekkes" />
+        <result column="tugas_penelitian" jdbcType="VARCHAR" property="tugasPenelitian" />
+        <result column="nama_user" jdbcType="VARCHAR" property="namaUser" />
+    </resultMap>
+
+    <resultMap id="DashboardPieChartResultMap" type="com.pusilkom.base.dto.DashboardPieChartDTO">
+        <result column="label" jdbcType="VARCHAR" property="name" />
+        <result column="jumlah" jdbcType="INTEGER" property="y" />
+    </resultMap>
+
+    <resultMap id="DashboardTableResultMap" type="com.pusilkom.base.dto.DashboardTableDTO">
+        <result column="nama" jdbcType="VARCHAR" property="nama" />
+        <result column="jumlah_peneliti" jdbcType="INTEGER" property="jumlahPeneliti" />
+        <result column="jumlah_reviewer" jdbcType="INTEGER" property="jumlahReviewer" />
+    </resultMap>
+
+    <select id="getListPenelitiDTO" resultMap="PenelitiResultMap">
+        <include refid="Main_Query"/>
+        <include refid="Criteria_Where_Clause"/>
+    </select>
+    <sql id="Main_Query">
+        select p.*, o.nama as namaInstitusi,
+        case when p.is_active is true then 'Aktif' else 'Tidak Aktif' end as isActiveStr, ri.nama as namaBidang,
+        case when p.jenis_kelamin = 'P' then 'Pria' when p.jenis_kelamin = 'W' then 'Wanita' else '-' end as jenisKelaminStr,
+        ri.nama as namaBidang, u.foto as foto, u.foto_name as fotoName, o.is_poltekkes, u.username as nama_user
+        from peneliti p
+        left join organisasi o on o.id = p.id_organisasi
+        left join rumpun_ilmu ri on ri.id = p.id_bidang_keahlian
+        left join userweb u on p.id_user = u.id
+    </sql>
+    <sql id="Criteria_Where_Clause">
+        <where>
+            <if test="searchForm.id != null">
+                AND p.id = #{searchForm.id}
+            </if>
+            <if test="searchForm.idUser != null">
+                AND p.id_user = #{searchForm.idUser}
+            </if>
+            <if test="searchForm.idOrganisasi != null">
+                AND p.id_organisasi = #{searchForm.idOrganisasi}
+            </if>
+
+        </where>
+    </sql>
+
+    <select id="getListPenelitiFromIdPenelitian" resultMap="PenelitiResultMap">
+        <include refid="getListPenelitiFromIdPenelitianQuery"/>
+    </select>
+    <sql id="getListPenelitiFromIdPenelitianQuery">
+        select
+        p.nama, p.gelar_depan, p.gelar_belakang,
+        o.nama as namaInstitusi,
+        pp.nama as peranPeneliti,
+        t.tugas_penelitian as tugasPenelitian
+        from tim_peneliti t
+        inner join peneliti p on t.id_peneliti = p.id
+        inner join organisasi o on t.id_organisasi = o.id
+        inner join peran_peneliti pp on t.id_peran_peneliti = pp.id
+        where t.id_peran_peneliti != 1
+        and o.is_poltekkes = #{isPoltekkes}
+        and t.id_penelitian = #{idPenelitian}
+    </sql>
+
+    <select id="getDaftarPenelitiReviewerInternal" parameterType="map" resultMap="PenelitiResultMap">
+        select p.id, trim(COALESCE(p.gelar_depan,'') || ' ' || p.nama || ' ' || COALESCE(p.gelar_belakang,'') || ' (' || coalesce(p.nidn,'') || ')' ) as nama
+        from peneliti p
+        inner join userweb u on u.id = p.id_user
+        where p.is_active = true
+        <if test="idOrganisasi != 1">
+            and p.id_organisasi = #{idOrganisasi}
+        </if>
+        <if test="kataKunci != null">
+            and lower(COALESCE(p.gelar_depan,'') || p.nama || COALESCE(p.gelar_belakang,'') || COALESCE(p.nidn,'')) like lower(#{kataKunci})
+        </if>
+
+        order by p.nama asc;
+    </select>
+
+    <select id="getDaftarPenelitiReviewerEksternal" parameterType="map" resultMap="PenelitiResultMap">
+        select a.id, trim(b.nama || ' - ' || COALESCE(a.gelar_depan,'') || ' ' || a.nama || ' ' || COALESCE(a.gelar_belakang,'') || ' (' || coalesce(a.nidn,'') || ')' ) as nama,
+        b.nama as namaInstitusi
+        from peneliti a
+        inner join organisasi b on a.id_organisasi = b.id
+        inner join userweb u on u.id = a.id_user
+        where
+        ((b.is_poltekkes = true and a.nidn is not null and a.is_active = true) or b.is_poltekkes = false)
+        and lower(b.nama || COALESCE(a.gelar_depan,'') || a.nama || COALESCE(a.gelar_belakang,'') || COALESCE(a.nidn,'')) like lower(#{kataKunci})
+        order by is_poltekkes, b.nama, a.nama
+    </select>
+
+    <select id="getPenelitiPerPendidikanTerakhir" parameterType="map" resultMap="DashboardPieChartResultMap">
+        select case when trim(upper(jenjang_pendidikan_terakhir)) is null then 'KOSONG' else trim(upper(jenjang_pendidikan_terakhir)) end as label,
+        count(a.id) as jumlah
+        from peneliti a
+        <if test="idOrganisasi == 1">
+            inner join organisasi b on a.id_organisasi = b.id
+        </if>
+        where
+        is_active = true
+        <if test="idOrganisasi != 1">
+            and a.id_organisasi = #{idOrganisasi}
+        </if>
+        <if test="idOrganisasi == 1">
+            and is_poltekkes = true
+        </if>
+        group by trim(upper(jenjang_pendidikan_terakhir))
+        order by trim(upper(jenjang_pendidikan_terakhir))
+    </select>
+
+    <select id="getPenelitiReviewerPerBidangIlmu" parameterType="map" resultMap="DashboardTableResultMap">
+        select x.nama,  case when jumlah_peneliti is null then 0 else jumlah_peneliti end as jumlah_peneliti,
+        case when jumlah_reviewer is null then 0 else jumlah_reviewer end as jumlah_reviewer
+        from (select * from rumpun_ilmu where level = 3) x
+        left join (
+        select c.id_bidang_keahlian, count(distinct id_peneliti) as jumlah_peneliti
+        from penelitian a
+        inner join tim_peneliti b on a.id = b.id_penelitian
+        inner join peneliti c on b.id_peneliti  = c.id
+        <if test="idOrganisasi == 1">
+            inner join organisasi d on c.id_organisasi = d.id
+        </if>
+        where a.tahun_usulan = #{tahunUsulan}
+        <if test="idOrganisasi != 1">
+            and b.id_organisasi = #{idOrganisasi}
+        </if>
+        group by id_bidang_keahlian
+        ) y on x.id = y.id_bidang_keahlian
+        left join (
+        select c.id_bidang_keahlian, count(distinct id_peneliti) as jumlah_reviewer
+        from penelitian a
+        inner join reviewer_skema b on a.id_reviewer_skema = b.id
+        inner join peneliti c on b.id_peneliti =c.id
+        <if test="idOrganisasi == 1">
+            inner join organisasi d on c.id_organisasi = d.id
+        </if>
+        where a.tahun_usulan = #{tahunUsulan}
+        <if test="idOrganisasi != 1">
+            and b.id_organisasi = #{idOrganisasi}
+        </if>
+        group by id_bidang_keahlian
+        ) z on x.id = z.id_bidang_keahlian
+        order by x.nama
+    </select>
+
+    <select id="getAnggotaPeneliti" parameterType="map" resultMap="PenelitiResultMap">
+        select p.id, p.id_organisasi, p.id_bidang_keahlian, p.gelar_depan, p.nama, p.gelar_belakang,
+        o.nama namaInstitusi, p.program_studi, r.nama namaBidang from peneliti p
+        join organisasi o on p.id_organisasi = o.id
+        join rumpun_ilmu r on p.id_bidang_keahlian = r.id
+        where o.is_poltekkes = #{isPoltekkes}
+        and p.id not in (select id_peneliti from tim_peneliti tp
+        join organisasi o2 on tp.id_organisasi = o2.id
+        where id_penelitian = #{idPenelitian} and o2.is_poltekkes = #{isPoltekkes})
+    </select>
+
+    <select id="selectTimPeneliti" parameterType="map" resultMap="PenelitiResultMap">
+        select d.gelar_depan, d.nama, d.gelar_belakang,
+        b.nama namaInstitusi,
+        c.nama namaBidang,
+        a.* from tim_peneliti a
+        inner join peneliti d on a.id_peneliti = d.id
+        left join organisasi b on a.id_organisasi = b.id
+        left join rumpun_ilmu c on a.id_bidang_keahlian_saat_ini = c.id
+        where id_penelitian = #{idPenelitian}
+        and id_peran_peneliti = 2
+        and b.is_poltekkes = #{isPoltekkes}
+    </select>
+</mapper>

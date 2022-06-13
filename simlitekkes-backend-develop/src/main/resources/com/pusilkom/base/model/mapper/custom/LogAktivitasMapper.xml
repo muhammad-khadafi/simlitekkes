@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.LogAktivitasMapper">
+    <resultMap id="LogAktivitasResultMap" type="com.pusilkom.base.dto.LogAktifitasDTO">
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="timestamp_aktivitas" jdbcType="TIMESTAMP" property="timestampAktivitas" />
+        <result column="method" jdbcType="VARCHAR" property="method" />
+        <result column="request" jdbcType="VARCHAR" property="request" />
+        <result column="url" jdbcType="VARCHAR" property="url" />
+        <result column="waktu_str" jdbcType="VARCHAR" property="waktuStr" />
+        <result column="short_request" jdbcType="VARCHAR" property="shortRequest" />
+    </resultMap>
+
+    <select id="getLogAktifitasPerBulan" parameterType="map" resultMap="LogAktivitasResultMap">
+        select l.*, to_char(l.timestamp_aktivitas, 'DD-MM-YYYY HH24:MI:SS') as waktu_str,
+        substring(l.request,1,50) || ' [Baca selengkapnya...]' as short_request
+        from log_aktivitas l
+        where
+        extract(month from l.timestamp_aktivitas) = #{bulan}
+        and extract(year from l.timestamp_aktivitas) = #{tahun}
+        order by timestamp_aktivitas desc
+    </select>
+
+</mapper>

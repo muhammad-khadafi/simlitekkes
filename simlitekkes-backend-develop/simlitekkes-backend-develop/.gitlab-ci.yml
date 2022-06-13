@@ -1,0 +1,108 @@
+---
+include:
+  - local: .gitlab/ci/global.gitlab-ci.yml
+  - local: .gitlab/ci/java.gitlab-ci.yml
+  - local: .gitlab/ci/image.gitlab-ci.yml
+  - local: .gitlab/ci/db.gitlab-ci.yml
+
+.trigger-deploy_template:
+  image: alpine:3.11
+  stage: deploy
+  variables:
+    ENV_TYPE: develop
+    GIT_STRATEGY: none
+  cache: {}
+  dependencies: []
+  before_script:
+    - apk update && apk add --no-cache curl
+  script:
+    - curl --request POST
+      --form token=${TRIGGER_TOKEN}
+      --form ref=master
+      --form "variables[ENV_TYPE]=${ENV_TYPE}"
+      --form "variables[SERVICE_TYPE]=backend"
+      https://gitlab.pusilkom.com/api/v4/projects/40/trigger/pipeline
+  allow_failure: true
+  except:
+    - schedules
+
+.api-test_template:
+  image: node:10-alpine
+  stage: post-deploy
+  variables:
+    ENV_TYPE: develop
+  cache: {}
+  before_script:
+    - yarn global add newman
+  script:
+    - newman run functional_test/postman_collection.json
+      --reporters cli,junit
+      --environment functional_test/${ENV_TYPE}.postman_environment.json
+  artifacts:
+    paths:
+      - newman/
+    reports:
+      junit:
+        - newman/*.xml
+  except:
+    - schedules
+  when: delayed
+  start_in: 2 minutes
+
+## CI/CD jobs
+build-image:develop:
+  extends: .base-build-image
+  variables:
+    IMAGE_TAG: "develop"
+  only:
+    - develop@ppsdm/simlitekkes-backend
+
+build-image:testing:
+  extends: .base-build-image
+  variables:
+    IMAGE_TAG: "testing"
+  only:
+    - testing@ppsdm/simlitekkes-backend
+
+build-image:production:
+  extends: .base-build-image
+  variables:
+    IMAGE_TAG: "latest"
+  only:
+    - master@ppsdm/simlitekkes-backend
+
+trigger-deploy:develop:
+  extends: .trigger-deploy_template
+  variables:
+    ENV_TYPE: develop
+  only:
+    - develop@ppsdm/simlitekkes-backend
+
+trigger-deploy:testing:
+  extends: .trigger-deploy_template
+  variables:
+    ENV_TYPE: testing
+  only:
+    - testing@ppsdm/simlitekkes-backend
+
+trigger-deploy:production:
+  extends: .trigger-deploy_template
+  variables:
+    ENV_TYPE: production
+  only:
+    - master@ppsdm/simlitekkes-backend
+  when: manual
+
+api-test:develop:
+  extends: .api-test_template
+  variables:
+    ENV_TYPE: develop
+  only:
+    - develop@ppsdm/simlitekkes-backend
+
+api-test:testing:
+  extends: .api-test_template
+  variables:
+    ENV_TYPE: testing
+  only:
+    - testing@ppsdm/simlitekkes-backend

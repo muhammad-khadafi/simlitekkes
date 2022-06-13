@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.BeritaMapper">
+    <resultMap id="BeritaResultMap" type="com.pusilkom.base.dto.BeritaDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="id_organisasi" jdbcType="INTEGER" property="idOrganisasi" />
+        <result column="judul" jdbcType="VARCHAR" property="judul" />
+        <result column="isi" jdbcType="VARCHAR" property="isi" />
+        <result column="is_published" jdbcType="BIT" property="isPublished" />
+        <result column="user_publish" jdbcType="VARCHAR" property="userPublish" />
+        <result column="nama_user" jdbcType="VARCHAR" property="namaUser" />
+        <result column="publish_timestamp" jdbcType="TIMESTAMP" property="publishTimestamp" />
+        <result column="nama_organisasi" jdbcType="VARCHAR" property="namaOrganisasi" />
+        <result column="publish_time_str" jdbcType="VARCHAR" property="publishTimeStr" />
+    </resultMap>
+
+    <sql id="getDataAdmin">
+        select a.id, a.id_organisasi,a.judul,a.isi,a.user_publish,a.is_published,a.publish_timestamp,
+        case when a.is_published is true then 'Ya' else 'Tidak' end as isPublishedStr from berita a
+        inner join organisasi b on a.id_organisasi = b.id
+        inner join userweb c on a.user_publish = c.username
+        order by publish_timestamp desc
+    </sql>
+    <sql id="getDataNonAdmin">
+        select a.id, a.id_organisasi,a.judul,a.isi,a.user_publish,a.is_published,a.publish_timestamp,
+        case when a.is_published is true then 'Ya' else 'Tidak' end as isPublishedStr from berita a
+        inner join organisasi b on a.id_organisasi = b.id
+        inner join userweb c on a.user_publish = c.username
+        where a.id_organisasi = #{idOrganisasi}
+        order by publish_timestamp desc
+    </sql>
+
+    <select id="getBeritaTerkini" parameterType="map" resultMap="BeritaResultMap">
+        select a.id, judul, substring(isi,1,250) as isi, b.nama as nama_organisasi, user_publish, c.nama as nama_user, publish_timestamp,
+        to_char(publish_timestamp, 'DD Mon YYYY HH24:MI:SS') as publish_time_str
+        from berita a
+        inner join organisasi b on a.id_organisasi = b.id
+        inner join userweb c on a.user_publish = c.username
+        where is_published = true
+        <if test="idOrganisasi != 1">
+            and (a.id_organisasi = #{idOrganisasi} or a.id_organisasi = 1)
+        </if>
+        order by publish_timestamp desc
+        limit 2
+    </select>
+
+    <select id="getAllBerita" resultMap="BeritaResultMap">
+        select a.id, a.id_organisasi, judul, substring(isi,1,250) as isi, b.nama as nama_organisasi, user_publish, c.nama as nama_user, is_published, publish_timestamp,
+        to_char(publish_timestamp, 'DD Mon YYYY HH24:MI:SS') as publish_time_str
+        from berita a
+        inner join organisasi b on a.id_organisasi = b.id
+        inner join userweb c on a.user_publish = c.username
+        order by publish_timestamp desc
+    </select>
+
+    <select id="getBeritaForNonPpsdm" parameterType="map" resultMap="BeritaResultMap">
+        select a.id, a.id_organisasi, judul, substring(isi,1,250) as isi, b.nama as nama_organisasi, user_publish, c.nama as nama_user, is_published, publish_timestamp,
+        to_char(publish_timestamp, 'DD Mon YYYY HH24:MI:SS') as publish_time_str
+        from berita a
+        inner join organisasi b on a.id_organisasi = b.id
+        inner join userweb c on a.user_publish = c.username
+        where (a.id_organisasi = #{idOrganisasi} or a.id_organisasi = 1)
+        <if test="roleCode != 'OPERATOR_PPM'">
+            and is_published = true
+        </if>
+        order by publish_timestamp desc
+    </select>
+
+    <select id="getDetailBeritaById" parameterType="map" resultMap="BeritaResultMap">
+        select a.id, a.id_organisasi, a.judul, a.isi, b.nama as nama_organisasi, user_publish, c.nama as nama_user, is_published, publish_timestamp,
+        to_char(publish_timestamp, 'DD Mon YYYY HH24:MI:SS') as publish_time_str
+        from berita a
+        inner join organisasi b on a.id_organisasi = b.id
+        inner join userweb c on a.user_publish = c.username
+        where a.id = #{idBerita}
+        order by publish_timestamp desc
+    </select>
+</mapper>

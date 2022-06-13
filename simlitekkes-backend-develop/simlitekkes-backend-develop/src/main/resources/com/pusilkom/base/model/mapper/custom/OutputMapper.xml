@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.OutputMapper">
+  <resultMap id="OutputResultMap" type="com.pusilkom.base.model.Output">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="id_jenis_output" jdbcType="INTEGER" property="idJenisOutput" />
+    <result column="id_penelitian" jdbcType="INTEGER" property="idPenelitian" />
+    <result column="judul" jdbcType="VARCHAR" property="judul" />
+    <result column="path_file" jdbcType="VARCHAR" property="pathFile" />
+    <result column="timestamp_upload" jdbcType="TIMESTAMP" property="timestampUpload" />
+    <result column="media_publikasi" jdbcType="VARCHAR" property="mediaPublikasi" />
+    <result column="tanggal_publikasi" jdbcType="DATE" property="tanggalPublikasi" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+  </resultMap>
+
+  <select id="getOutputByParam" resultMap="OutputResultMap">
+    <include refid="Main_Query"/>
+    <include refid="Criteria_Where_Clause"/>
+  </select>
+  <sql id="Main_Query">
+    select o.*
+    from output o
+    left join jenis_output jo on jo.id = o.id_jenis_output
+    left join penulis_output po on po.id_output = o.id
+    left join peneliti p on p.id = po.id_peneliti
+  </sql>
+  <sql id="Criteria_Where_Clause">
+    <where>
+      <if test="idUser != null">
+        AND p.id_user = #{idUser}
+      </if>
+      <if test="idJenisOutput != null">
+        AND o.id_jenis_output = #{idJenisOutput}
+      </if>
+    </where>
+  </sql>
+</mapper>

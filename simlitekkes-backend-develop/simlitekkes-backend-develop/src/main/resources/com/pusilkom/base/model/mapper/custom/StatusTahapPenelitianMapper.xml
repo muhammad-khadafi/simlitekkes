@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.StatusTahapPenelitianMapper">
+    <resultMap id="StatusTahapPenelitianResultMap" type="com.pusilkom.base.dto.StatusTahapPenelitianDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="id_status_syarat_1" jdbcType="INTEGER" property="idStatusSyarat1" />
+        <result column="id_tahap_penelitian" jdbcType="INTEGER" property="idTahapPenelitian" />
+        <result column="nama" jdbcType="VARCHAR" property="nama" />
+        <result column="id_status_syarat_2" jdbcType="INTEGER" property="idStatusSyarat2" />
+        <result column="kode_status" jdbcType="VARCHAR" property="kodeStatus" />
+        <result column="kode_role_1" jdbcType="VARCHAR" property="kodeRole1" />
+        <result column="kode_role_2" jdbcType="VARCHAR" property="kodeRole2" />
+        <result column="label_button" jdbcType="VARCHAR" property="labelButton" />
+    </resultMap>
+    <sql id="getListStatusTahapPenelitianBaruQuery">
+        select *
+        from status_tahap_penelitian
+        <where>
+            and (id_status_syarat_1 = #{idStatusSaatIni} or id_status_syarat_2 = #{idStatusSaatIni})
+            and (kode_role_1 = #{role} or kode_role_2 = #{role})
+            <if test="kodeStatus != '' and kodeStatus != null">
+                and kode_status = #{kodeStatus}
+            </if>
+        </where>
+    </sql>
+    <select id="getListStatusTahapPenelitianBaru" resultMap="StatusTahapPenelitianResultMap">
+        <include refid="getListStatusTahapPenelitianBaruQuery" />
+    </select>
+</mapper>

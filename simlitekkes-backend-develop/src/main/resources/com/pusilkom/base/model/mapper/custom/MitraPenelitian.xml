@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.MitraPenelitianMapper">
+    <resultMap id="MitraPenelitianResultMap" type="com.pusilkom.base.dto.MitraPenelitianDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="id_jenis_mitra" jdbcType="INTEGER" property="idJenisMitra" />
+        <result column="id_penelitian" jdbcType="INTEGER" property="idPenelitian" />
+        <result column="nama_mitra" jdbcType="VARCHAR" property="namaMitra" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="penanggung_jawab" jdbcType="VARCHAR" property="penanggungJawab" />
+        <result column="file_path" jdbcType="VARCHAR" property="filePath" />
+        <result column="timestamp_upload" jdbcType="TIMESTAMP" property="timestampUpload" />
+        <result column="jumlahKontribusi" jdbcType="INTEGER" property="jumlahKontribusi" />
+        <result column="jenisMitraStr" jdbcType="VARCHAR" property="jenisMitraStr" />
+        <result column="rekapBarang" jdbcType="VARCHAR" property="rekapBarang" />
+    </resultMap>
+
+    <select id="getListMitraPenelitianDTO" resultMap="MitraPenelitianResultMap">
+        <include refid="Main_Query"/>
+        <include refid="Criteria_Where_Clause"/>
+    </select>
+    <sql id="Main_Query">
+        select a.*, jm.nama as jenisMitraStr,
+        sum(jumlah_kontribusi) as jumlahKontribusi,
+        case when sum(jumlah_kontribusi) is null then '-' else to_char(sum(jumlah_kontribusi), '999G999G999G999G999') end as jumlahKontribusiStr
+        from mitra_penelitian a
+        left join kontribusi_mitra b on a.id = b.id_mitra_penelitian
+        left join jenis_mitra jm on jm.id = a.id_jenis_mitra
+    </sql>
+    <sql id="Criteria_Where_Clause">
+        <where>
+            <if test="idPenelitian != null">
+                AND a.id_penelitian = #{idPenelitian}
+            </if>
+        </where>
+        group by a.id, jm.nama
+    </sql>
+    <select id="getRekapMitraPenelitianFromPenelitian" resultMap="MitraPenelitianResultMap">
+        <include refid="getRekapMitraPenelitianFromPenelitianQuery" />
+    </select>
+    <sql id="getRekapMitraPenelitianFromPenelitianQuery">
+        select b.id, coalesce (sum(a.jumlah_kontribusi),0) as jumlahKontribusi, coalesce (string_agg(barang_kontribusi, ', '), 'tidak ada nama terinput') as rekapBarang
+        from kontribusi_mitra a
+        inner join mitra_penelitian b on a.id_mitra_penelitian = b.id
+        where id_penelitian = #{idPenelitian}
+        group by b.id
+    </sql>
+</mapper>

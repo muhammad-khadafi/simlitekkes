@@ -1,0 +1,4 @@
+---
+trustedRegistries:
+  - docker.io
+  - registry.pusilkom.com

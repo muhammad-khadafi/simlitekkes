@@ -1,0 +1,10 @@
+# Prepare the base image containing the dependencies
+FROM node:10.19
+
+# Setup custom arguments for downloading & installing dependencies
+ARG YARN_ARGS="--non interactive --no-progress"
+WORKDIR /app
+
+# Download dependencies (node_modules)
+COPY package.json ./
+RUN yarn install ${YARN_ARGS}

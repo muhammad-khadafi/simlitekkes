@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.ReviewerSkemaMapper">
+
+    <resultMap id="ReviewerSkemaResultMap" type="com.pusilkom.base.dto.ReviewerSkemaDTO">
+        <result column="id_peneliti" jdbcType="INTEGER" property="idPeneliti" />
+        <result column="id_organisasi" jdbcType="INTEGER" property="idOrganisasi" />
+        <result column="id_pemberi_tugas" jdbcType="INTEGER" property="idPemberiTugas" />
+        <result column="tahun_usulan" jdbcType="CHAR" property="tahunUsulan" />
+        <result column="tahun_pelaksanaan" jdbcType="CHAR" property="tahunPelaksanaan" />
+        <result column="is_active" jdbcType="BIT" property="isActive" />
+        <result column="is_reviewer_eksternal" jdbcType="BIT" property="isReviewerEksternal" />
+        <result column="is_new" jdbcType="BIT" property="isNew" />
+        <result column="is_seen" jdbcType="BIT" property="isSeen" />
+        <result column="id_dokumen_organisasi" jdbcType="INTEGER" property="idDokumenOrganisasi" />
+    </resultMap>
+
+    <resultMap id="ReviewerResultMap" type="com.pusilkom.base.dto.ReviewerDTO">
+        <id column="id_reviewer_skema" jdbcType="INTEGER" property="id" />
+        <result column="id_peneliti" jdbcType="INTEGER" property="idPeneliti" />
+        <result column="nama_peneliti" jdbcType="VARCHAR" property="namaPeneliti" />
+        <result column="nidn_peneliti" jdbcType="VARCHAR" property="nidnPeneliti" />
+        <result column="nama_institusi" jdbcType="VARCHAR" property="namaInstitusi" />
+        <result column="tahun_usulan" jdbcType="CHAR" property="tahunUsulan" />
+        <result column="tahun_pelaksanaan" jdbcType="CHAR" property="tahunPelaksanaan" />
+        <result column="jumlah_proposal_diplot" jdbcType="INTEGER" property="jumlahProposalDiPlot" />
+        <result column="id_dokumen_organisasi" jdbcType="INTEGER" property="idDokumenOrganisasi" />
+        <result column="nomor_dokumen" jdbcType="VARCHAR" property="nomorDokumen" />
+        <result column="beban_review_maksimal" jdbcType="INTEGER" property="bebanReviewMaksimal" />
+        <result column="judul_dokumen" jdbcType="VARCHAR" property="judulDokumen" />
+    </resultMap>
+
+    <resultMap id="PlottingReviewerResultMap" type="com.pusilkom.base.dto.PlottingReviewerDTO">
+        <id column="id_penelitian" jdbcType="INTEGER" property="idPenelitian" />
+        <result column="id_reviewer_skema" jdbcType="INTEGER" property="idReviewerSkema" />
+        <result column="judul_penelitian" jdbcType="VARCHAR" property="judulPenelitian" />
+        <result column="id_ketua_tim" jdbcType="INTEGER" property="idKetuaTim" />
+        <result column="ketua_tim" jdbcType="VARCHAR" property="namaKetuaTim" />
+        <result column="institusi_ketua_tim" jdbcType="VARCHAR" property="institusiKetuaTim" />
+        <result column="id_reviewer" jdbcType="INTEGER" property="idReviewer" />
+        <result column="nama_reviewer" jdbcType="VARCHAR" property="namaReviewer" />
+        <result column="institusi_reviewer" jdbcType="VARCHAR" property="institusiReviewer" />
+        <result column="tahun_usulan" jdbcType="VARCHAR" property="tahunUsulan" />
+        <result column="status_penelitian" jdbcType="VARCHAR" property="statusPenelitian" />
+    </resultMap>
+
+    <resultMap id="HasilReviewResultMap" type="com.pusilkom.base.dto.HasilReviewDTO">
+        <id column="bagian_usulan" jdbcType="VARCHAR" property="bagianUsulan" />
+        <result column="id_pertanyaan" jdbcType="INTEGER" property="idPertanyaan" />
+        <result column="id_pilihan" jdbcType="INTEGER" property="idPilihan" />
+        <result column="nomor_urut" jdbcType="INTEGER" property="nomorUrut" />
+        <result column="skor_maksimal" jdbcType="INTEGER" property="skorMaksimal" />
+        <result column="nilai" jdbcType="INTEGER" property="nilai" />
+        <result column="id_jawaban" jdbcType="INTEGER" property="idJawaban" />
+        <result column="id_jawaban_dipilih" jdbcType="INTEGER" property="idJawabanDipilih" />
+        <result column="pertanyaan" jdbcType="VARCHAR" property="pertanyaan" />
+        <result column="pilihan" jdbcType="VARCHAR" property="pilihan" />
+        <result column="komentar" jdbcType="VARCHAR" property="komentar" />
+    </resultMap>
+
+    <resultMap id="DaftarReviewResultMap" type="com.pusilkom.base.dto.DaftarReviewDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="judul" jdbcType="VARCHAR" property="judul" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="institusi" jdbcType="VARCHAR" property="institusi" />
+        <result column="tanggalTerima" jdbcType="DATE" property="tanggalTerima" />
+        <result column="tanggalSelesai" jdbcType="DATE" property="tanggalSelesai" />
+        <result column="tahunUsulan" jdbcType="INTEGER" property="tahunUsulan" />
+    </resultMap>
+
+    <select id="getReviewerHasPenugasan" parameterType="map" resultMap="ReviewerSkemaResultMap">
+        select * from reviewer_skema a
+        inner join peneliti b on a.id_peneliti = b.id
+        where b.id_user = #{idUser}
+    </select>
+
+    <select id="getReviewerInternalByOrganization" parameterType="map" resultMap="ReviewerResultMap">
+        select a.id as id_reviewer_skema, trim(COALESCE(b.gelar_depan,'') || ' ' || b.nama || ' ' || COALESCE(b.gelar_belakang,'')) as nama_peneliti,
+        b.nidn as nidn_peneliti, c.nama as nama_institusi, a.tahun_usulan, a.tahun_pelaksanaan, d.nomor_dokumen,
+        case when d.nomor_dokumen is not null then
+        trim(COALESCE(d.judul,'') || ' (' || coalesce(d.nomor_dokumen,'') || ')' ) else '' end as judul_dokumen,
+        a.id_dokumen_organisasi, a.id_peneliti,
+        case when e.jumlah_proposal_diplot is null then 0 else e.jumlah_proposal_diplot end as jumlah_proposal_diplot
+        from reviewer_skema a
+        inner join peneliti b on a.id_peneliti = b.id
+        inner join organisasi c on a.id_organisasi = c.id
+        left join dokumen_organisasi d on a.id_dokumen_organisasi = d.id
+        left join
+        (
+        select id_reviewer_skema, tahun_usulan,
+        count(f.id) as jumlah_proposal_diplot
+        from penelitian f
+        where tahun_usulan = #{tahunUsulan}
+        group by id_reviewer_skema, tahun_usulan
+        ) e on a.id = e.id_reviewer_skema and a.tahun_usulan = e.tahun_usulan
+        where c.is_poltekkes = true
+        <if test="idOrganisasi != 1">
+            and c.id = #{idOrganisasi}
+        </if>
+        and a.tahun_usulan = #{tahunUsulan}
+        order by a.tahun_usulan, a.tahun_pelaksanaan, c.nama
+    </select>
+
+    <select id="getReviewerEksternal" parameterType="map" resultMap="ReviewerResultMap">
+        select a.id as id_reviewer_skema, trim(COALESCE(b.gelar_depan,'') || ' ' || b.nama || ' ' || COALESCE(b.gelar_belakang,'')) as nama_peneliti,
+        b.nidn as nidn_peneliti,
+        c.nama as nama_institusi, a.tahun_usulan, a.tahun_pelaksanaan,
+        d.nomor_dokumen, d.nama_file, d.file_path,
+        case when d.nomor_dokumen is not null then
+        trim(COALESCE(d.judul,'') || ' (' || coalesce(d.nomor_dokumen,'') || ')' ) else '' end as judul_dokumen,
+        a.id_dokumen_organisasi, a.id_peneliti,
+        case when e.jumlah_proposal_diplot is null then 0 else e.jumlah_proposal_diplot end as jumlah_proposal_diplot
+        from reviewer_skema a
+        inner join peneliti b on a.id_peneliti = b.id
+        inner join organisasi c on b.id_organisasi = c.id
+        left join dokumen_organisasi d on a.id_dokumen_organisasi = d.id
+        left join
+        (select id_reviewer_skema, tahun_usulan, count(f.id) as jumlah_proposal_diplot
+        from penelitian f
+        where tahun_usulan = #{tahunUsulan}
+        group by id_reviewer_skema, tahun_usulan
+        ) e on a.id = e.id_reviewer_skema and a.tahun_usulan = e.tahun_usulan
+        where a.id_organisasi = 1
+        and a.is_reviewer_eksternal = true
+        and a.tahun_usulan = #{tahunUsulan}
+        order by a.tahun_usulan, a.tahun_pelaksanaan, c.nama
+    </select>
+
+    <select id="getAllReviewerForPlotting" parameterType="map" resultMap="ReviewerResultMap">
+        select a.id as id_reviewer_skema, a.tahun_usulan, c.nama as nama_institusi,
+        trim(COALESCE(b.gelar_depan,'') || ' ' || b.nama || ' ' || COALESCE(b.gelar_belakang,'')) as nama_peneliti,
+        case when beban_review_maksimal is null then 0 else beban_review_maksimal end,
+        case when jumlah_proposal_diplot is null then 0 else jumlah_proposal_diplot end
+        from reviewer_skema a
+        inner join peneliti b on a.id_peneliti = b.id
+        inner join organisasi c on b.id_organisasi = c.id
+        left join (
+        select id_reviewer_skema, count(id) as jumlah_proposal_diplot from penelitian group by id_reviewer_skema
+        ) d on d.id_reviewer_skema = a.id
+        where (a.id_organisasi = #{idOrganisasi} or a.id_organisasi = 1)
+        and tahun_usulan = #{tahunUsulan}
+        order by a.tahun_usulan, c.nama, nama_peneliti
+    </select>
+
+    <select id="getAllProposalForPlotting" parameterType="map" resultMap="PlottingReviewerResultMap">
+        select b.id as id_penelitian, b.tahun_usulan, b.judul as judul_penelitian,
+        f.nama as institusi_ketua_tim, e.nama as ketua_tim,
+        g.institusi_reviewer, g.reviewer as nama_reviewer, g.id_reviewer_skema, g.id_reviewer
+        from penelitian b
+        inner join tim_peneliti c on b.id = c.id_penelitian
+        inner join workflow_penelitian d on b.id = d.id_penelitian
+        inner join peneliti e on c.id_peneliti = e.id
+        inner join organisasi f on e.id_organisasi = f.id
+        left join (
+        select h.id as id_reviewer_skema, j.nama as institusi_reviewer, i.nama as reviewer, i.id as id_reviewer
+        from reviewer_skema h
+        inner join peneliti i on h.id_peneliti = i.id
+        inner join organisasi j on i.id_organisasi = j.id
+        where (h.id_organisasi = #{idOrganisasi} or h.id_organisasi = 1)
+        and tahun_usulan = #{tahunUsulan}
+        ) g on b.id_reviewer_skema = g.id_reviewer_skema
+        where c.id_peran_peneliti = 1
+        <if test="idOrganisasi != 1">
+            and e.id_organisasi = #{idOrganisasi}
+        </if>
+        and b.tahun_usulan = #{tahunUsulan}
+        and d.is_last = true
+        and d.id_status_tahap_penelitian >= (
+        select id from status_tahap_penelitian where kode_status = 'SUBMITTED')
+        <if test="idOrganisasi == 1">
+            and f.is_poltekkes = true
+            and f.klasifikasi = '3'
+        </if>
+    </select>
+
+    <select id="getRiwayatReview" parameterType="map" resultMap="PlottingReviewerResultMap">
+        select a.tahun_usulan, a.id as id_penelitian, a.judul as judul_penelitian,  g.nama as institusi_ketua_tim, e.nama as status_penelitian
+        from penelitian a
+        inner join reviewer_skema b on a.id_reviewer_skema = b.id
+        inner join peneliti c on b.id_peneliti = c.id
+        inner join workflow_penelitian d on a.id = d.id_penelitian
+        inner join status_tahap_penelitian e on d.id_status_tahap_penelitian = e.id
+        inner join tim_peneliti f on a.id = f.id_penelitian
+        inner join organisasi g on f.id_organisasi = g.id
+        where id_peran_peneliti = 1
+        and c.id_user = #{idUser}
+        and d.is_last = true
+        order by a.tahun_usulan desc, a.id desc
+    </select>
+
+    <select id="getRiwayatReviewByTahunUsulan" parameterType="map" resultMap="PlottingReviewerResultMap">
+        select a.tahun_usulan, a.id as id_penelitian, a.judul as judul_penelitian,  g.nama as institusi_ketua_tim, e.nama as status_penelitian
+        from penelitian a
+        inner join reviewer_skema b on a.id_reviewer_skema = b.id
+        inner join peneliti c on b.id_peneliti = c.id
+        inner join workflow_penelitian d on a.id = d.id_penelitian
+        inner join status_tahap_penelitian e on d.id_status_tahap_penelitian = e.id
+        inner join tim_peneliti f on a.id = f.id_penelitian
+        inner join organisasi g on f.id_organisasi = g.id
+        where id_peran_peneliti = 1
+        and a.tahun_usulan = #{tahunUsulan}
+        and d.is_last = true
+        and c.id = #{idPeneliti}
+        order by a.tahun_usulan desc, a.id desc
+    </select>
+
+    <select id="getHasilReviewUsulan" parameterType="map" resultMap="HasilReviewResultMap">
+        select b.nama as bagian_usulan, a.id as id_pertanyaan, c.id as id_pilihan,
+        c.nomor_urut, skor_maksimal,  nilai,
+        d.id_pilihan_kriteria_penilaian as id_jawaban_dipilih,
+        c.id as id_jawaban,
+        a.deskripsi as pertanyaan, c.deskripsi as pilihan, komentar
+        from (select * from kriteria_penilaian where id_skema_penelitian = #{idSkemaPenelitian}) a
+        inner join bagian_usulan  b on a.id_bagian_usulan = b.id
+        inner join pilihan_kriteria_penilaian  c on a.id = c.id_kriteria_penilaian
+        left join (select * from kriteria_penilaian_penelitian d where id_penelitian = #{idPenelitian}) d on   d.id_pilihan_kriteria_penilaian = c.id
+        order by urutan_tab, a.id, c.nomor_urut
+    </select>
+
+    <select id="getDaftarReview" parameterType="map" resultMap="DaftarReviewResultMap">
+        select a.id, a.judul, c.id_user, a.tahun_usulan as tahunUsulan, g.nama as institusi,
+        d.timestamp_update as tanggalTerima, d.timestamp_update + interval '7' day as tanggalSelesai,
+        case when e.kode_status in ('PLOTTED','IN_REVIEW', 'REVISED', 'REVISION_IN_REVIEW') then e.nama else '' end as status
+        from penelitian a
+        inner join reviewer_skema b on a.id_reviewer_skema = b.id
+        inner join peneliti c on b.id_peneliti = c.id
+        inner join workflow_penelitian d on a.id = d.id_penelitian
+        inner join status_tahap_penelitian e on d.id_status_tahap_penelitian = e.id
+        inner join tim_peneliti f on a.id = f.id_penelitian
+        inner join organisasi g on f.id_organisasi = g.id
+        where true
+        and c.id_user = #{idUser}
+        and a.tahun_usulan = #{tahunUsulan}
+        and d.is_last = true
+        and id_peran_peneliti = 1
+        and e.kode_status in ('PLOTTED','IN_REVIEW', 'REVISED', 'REVISION_IN_REVIEW')
+        order by a.id desc
+    </select>
+
+</mapper>

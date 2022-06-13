@@ -1,0 +1,16 @@
+---
+version: "3.7"
+services:
+  frontend:
+    container_name: simlitekkes-frontend
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        BUILD_MODE: development
+        VUE_APP_BACKEND_URL:
+    image: registry.pusilkom.com/ppsdm/simlitekkes-frontend:${FRONTEND_IMAGE_TAG:-localhost}
+    env_file: .env
+    ports:
+      - "80"
+    restart: "no"

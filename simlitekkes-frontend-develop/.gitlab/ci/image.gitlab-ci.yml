@@ -1,0 +1,73 @@
+---
+# Jobs for building container images
+# See: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
+.base-build-image:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug-v0.19.0
+    entrypoint: [""]
+  variables:
+    BUILD_MODE: development
+    IMAGE_TAG: latest
+    VUE_APP_BACKEND: http://localhost:8001
+    YARN_ARGS: "--non-interactive --no-progress --network-timeout 120000 --prefer-offline"
+  before_script:
+    - echo "{\"auths\":{\"$REGISTRY_SERVER\":{\"username\":\"$REGISTRY_USERNAME\",\"password\":\"$REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - export CREATED_TIMESTAMP=$(date --utc -Iseconds)
+  script:
+    - /kaniko/executor
+      --build-arg BUILD_MODE="${BUILD_MODE}"
+      --build-arg IMAGE_TAG="${IMAGE_TAG}"
+      --build-arg VUE_APP_BACKEND_URL="${VUE_APP_BACKEND_URL}"
+      --build-arg YARN_ARGS="${YARN_ARGS}"
+      --cache
+      --cleanup
+      --context ./
+      --destination registry.pusilkom.com/ppsdm/simlitekkes-frontend:${CI_COMMIT_SHORT_SHA}
+      --destination registry.pusilkom.com/ppsdm/simlitekkes-frontend:${IMAGE_TAG}
+      --dockerfile Dockerfile-with-baseimage
+      --label org.opencontainers.image.created=${CREATED_TIMESTAMP}
+      --label org.opencontainers.image.revision=${CI_COMMIT_SHA}
+      --single-snapshot
+  after_script:
+    - rm /kaniko/.docker/config.json
+    - unset CREATED_TIMESTAMP
+  retry:
+    max: 2
+    when:
+      - api_failure
+      - runner_system_failure
+      - unknown_failure
+  tags:
+    - docker
+
+.base-create-base-image:
+  extends: .base-build-image
+  stage: install
+  script:
+    - /kaniko/executor
+      --build-arg IMAGE_TAG="${IMAGE_TAG}"
+      --build-arg YARN_ARGS="${YARN_ARGS}"
+      --cache
+      --cleanup
+      --context ./
+      --destination registry.pusilkom.com/ppsdm/simlitekkes-frontend-base:${CI_COMMIT_SHORT_SHA}
+      --destination registry.pusilkom.com/ppsdm/simlitekkes-frontend-base:${IMAGE_TAG}
+      --dockerfile Dockerfile-baseimage
+      --single-snapshot
+  only:
+    changes:
+      - package.json
+  
+lint-image:
+  stage: pre-build
+  image: hadolint/hadolint:latest-alpine
+  before_script:
+    - hadolint --version
+  script:
+    - find .
+      -name "Dockerfile*" -type f
+      -exec hadolint --config .hadolint.yml {} ';'
+  only:
+    changes:
+      - Dockerfile

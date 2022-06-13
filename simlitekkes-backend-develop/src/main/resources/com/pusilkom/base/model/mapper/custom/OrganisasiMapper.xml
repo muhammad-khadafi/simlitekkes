@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.OrganisasiMapper">
+    <resultMap id="TopikUnggulanResultMap" type="com.pusilkom.base.dto.OrganisasiDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="id_topik" jdbcType="INTEGER" property="idTopik" />
+        <result column="id_tema" jdbcType="INTEGER" property="idTema" />
+        <result column="tema_unggulan" jdbcType="VARCHAR" property="temaUnggulan" />
+        <result column="topik_unggulan" jdbcType="VARCHAR" property="topikUnggulan" />
+    </resultMap>
+
+    <select id="getTemaTopikUnggulan" parameterType="map" resultMap="TopikUnggulanResultMap">
+        select org.id, org.id_topik, tm.id, tm.nama as tema_unggulan, tpk.nama as topik_unggulan
+        from organisasi org
+        left join topik tpk on tpk.id = org.id_topik
+        left join tema tm on tm.id = tpk.id_tema
+        where org.id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,23 @@
+---
+version: "3"
+services:
+  adminer:
+    image: adminer:4.7
+    environment:
+      ADMINER_DESIGN: mancave
+    depends_on:
+      - db
+    expose:
+      - "10013:8080"
+    restart: always
+  backend:
+    image: registry.pusilkom.com/ppsdm/simlitekkes-backend:testing
+    env_file:
+      - .env-testing
+    ports:
+      - "10011:8001"
+  db:
+    env_file:
+      - .env-testing
+    ports:
+      - "10012:5432"

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.JenisOutputMapper">
+    <resultMap id="JenisOutputResultMap" type="com.pusilkom.base.dto.JenisOutputDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="kelompok_output" jdbcType="VARCHAR" property="kelompokOutput" />
+        <result column="nama" jdbcType="VARCHAR" property="nama" />
+    </resultMap>
+    <select id="getListWajib" resultMap="JenisOutputResultMap">
+        <include refid="getListWajibQuery"/>
+    </select>
+    <sql id="getListWajibQuery">
+        select b.id, b.kelompok_output, b.nama from output_skema_penelitian a
+        inner join jenis_output b on a.id_jenis_output = b.id
+        where a.id_skema_penelitian = #{idSkemaPenelitian}
+        and b.id not in (
+            select id_jenis_output 
+            from target_output_penelitian top  
+            where id_penelitian = #{idPenelitian}
+        )
+    </sql>
+    <select id="getAll" resultMap="JenisOutputResultMap">
+        <include refid="getAllQuery"/>
+    </select>
+    <sql id="getAllQuery">
+        select * from jenis_output     
+    </sql>
+    <select id="getListTambahan" resultMap="JenisOutputResultMap">
+        <include refid="getListTambahanQuery"/>
+    </select>
+    <sql id="getListTambahanQuery">
+        select * from jenis_output     
+        where id not in (
+            select id_jenis_output
+            from target_output_penelitian top
+            where id_penelitian = #{idPenelitian}
+        )
+    </sql>
+</mapper>

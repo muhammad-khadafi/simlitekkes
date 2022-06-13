@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.SkemaPenelitianMapper">
+  <resultMap id="SkemaPenelitianResultMap" type="com.pusilkom.base.dto.SkemaPenelitianDTO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="id_jenis_penelitian" jdbcType="INTEGER" property="idJenisPenelitian" />
+    <result column="nama" jdbcType="VARCHAR" property="nama" />
+    <result column="singkatan" jdbcType="VARCHAR" property="singkatan" />
+    <result column="deskripsi" jdbcType="VARCHAR" property="deskripsi" />
+    <result column="klasifikasi_1" jdbcType="BIT" property="klasifikasi1" />
+    <result column="klasifikasi_2" jdbcType="BIT" property="klasifikasi2" />
+    <result column="klasifikasi_3" jdbcType="BIT" property="klasifikasi3" />
+    <result column="persyaratan_penelitian" jdbcType="VARCHAR" property="persyaratanPenelitian" />
+    <result column="tkt_min" jdbcType="INTEGER" property="tktMin" />
+    <result column="tkt_max" jdbcType="INTEGER" property="tktMax" />
+    <result column="jumlah_pengusul_min" jdbcType="SMALLINT" property="jumlahPengusulMin" />
+    <result column="jumlah_pengusul_max" jdbcType="SMALLINT" property="jumlahPengusulMax" />
+    <result column="jangka_waktu_min" jdbcType="SMALLINT" property="jangkaWaktuMin" />
+    <result column="jangka_waktu_max" jdbcType="SMALLINT" property="jangkaWaktuMax" />
+    <result column="jumlah_dana_min" jdbcType="INTEGER" property="jumlahDanaMin" />
+    <result column="jumlah_dana_max" jdbcType="INTEGER" property="jumlahDanaMax" />
+    <result column="id_kategori_skema_penelitian" jdbcType="INTEGER" property="idKategoriSkemaPenelitian" />
+    <result column="is_dikelola_pusat" jdbcType="BIT" property="isDikelolaPusat" />
+    <result column="nama_kategori" jdbcType="VARCHAR" property="namaKategori" />
+    <result column="nama_jenis_penelitian" jdbcType="VARCHAR" property="namaJenisPenelitian" />
+    <result column="tktString" jdbcType="VARCHAR" property="tktString" />
+    <result column="jumlahDanaString" jdbcType="VARCHAR" property="jumlahDanaString" />
+    <result column="jangkaWaktuString" jdbcType="VARCHAR" property="jangkaWaktuString" />
+    <result column="jumlahAnggotaString" jdbcType="VARCHAR" property="jumlahAnggotaString" />
+    <result column="luaran" jdbcType="VARCHAR" property="luaran" />
+  </resultMap>
+  <resultMap id="KategoriSkemaPenelitianResultMap" type="com.pusilkom.base.model.KategoriSkemaPenelitian">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="nama" jdbcType="VARCHAR" property="nama" />
+  </resultMap>
+
+  <select id="getListSkemaPenelitian" resultMap="SkemaPenelitianResultMap">
+    <include refid="Main_Query"/>
+    <include refid="Criteria_Where_Clause"/>
+  </select>
+  <sql id="Main_Query">
+    select sp.*, ksp.nama as nama_kategori, jp.nama as nama_jenis_penelitian, CONCAT(tkt_min, '-', tkt_max) as tktString,
+    CONCAT(jangka_waktu_min, '-', jangka_waktu_max) as jangkaWaktuString, CONCAT(jumlah_pengusul_min, '-', jumlah_pengusul_max) as jumlahAnggotaString,
+    string_agg(jo.nama, '|||') as luaran
+    from skema_penelitian as sp
+    left join kategori_skema_penelitian ksp on ksp.id = sp.id_kategori_skema_penelitian
+    left join jenis_penelitian jp on jp.id = sp.id_jenis_penelitian
+    left join output_skema_penelitian osp on osp.id_skema_penelitian = sp.id
+    left join jenis_output jo on osp.id_jenis_output = jo.id
+  </sql>
+  <sql id="Criteria_Where_Clause">
+    <where>
+      <if test="searchForm.id != null">
+        AND sp.id = #{searchForm.id}
+      </if>
+    </where>
+    group by sp.id, nama_kategori, nama_jenis_penelitian
+  </sql>
+
+  <select id="getListKategoriByKlasifikasi" resultMap="KategoriSkemaPenelitianResultMap">
+    <include refid="Main_Query1"/>
+    <include refid="Criteria_Where_Clause1"/>
+  </select>
+  <sql id="Main_Query1">
+    select distinct id, nama from kategori_skema_penelitian ksp
+  </sql>
+  <sql id="Criteria_Where_Clause1">
+    <where>
+      ksp.id in
+      <if test="searchForm.klasifikasi1 != null">
+         (select sp.id_kategori_skema_penelitian from skema_penelitian sp where sp.klasifikasi_1 is true)
+      </if>
+      <if test="searchForm.klasifikasi2 != null">
+        (select sp.id_kategori_skema_penelitian from skema_penelitian sp where sp.klasifikasi_2 is true)
+      </if>
+      <if test="searchForm.klasifikasi3 != null">
+        (select sp.id_kategori_skema_penelitian from skema_penelitian sp where sp.klasifikasi_3 is true)
+      </if>
+    </where>
+  </sql>
+</mapper>

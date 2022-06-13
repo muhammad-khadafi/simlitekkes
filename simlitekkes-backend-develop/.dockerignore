@@ -1,0 +1,8 @@
+# Files and folders to be ignored when building container image
+
+*.iml
+.devcontainer/
+.gitlab/
+.idea/
+.mvn/
+.settings/

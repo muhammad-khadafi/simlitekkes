@@ -1,0 +1,9 @@
+---
+# Project-wide GitLab CI/CD configuration
+# Heavily inspired by the official GitLab repo (https://gitlab.com/gitlab-org/gitlab)
+stages:
+  - pre-build
+  - install
+  - build
+  - deploy
+  - post-deploy

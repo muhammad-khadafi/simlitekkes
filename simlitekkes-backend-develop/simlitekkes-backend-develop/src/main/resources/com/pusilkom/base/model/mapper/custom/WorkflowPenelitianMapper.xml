@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.WorkflowPenelitianMapper">
+    <resultMap id="WorkflowPenelitianResultMap" type="com.pusilkom.base.dto.WorkflowPenelitianDTO">
+        <result column="id_penelitian" jdbcType="INTEGER" property="idPenelitian" />
+        <result column="id_status_tahap_penelitian" jdbcType="INTEGER" property="idStatusTahapPenelitian" />
+        <result column="timestamp_update" jdbcType="TIMESTAMP" property="timestampUpdate" />
+        <result column="is_last" jdbcType="BIT" property="isLast" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+    </resultMap>
+    <select id="getListWorkflowPenelitian" resultMap="WorkflowPenelitianResultMap">
+        <include refid="getListWorkflowPenelitianQuery"/>
+    </select>
+    <sql id="getListWorkflowPenelitianQuery">
+        select a.*, b.nama as status from
+        workflow_penelitian a
+        inner join status_tahap_penelitian b on a.id_status_tahap_penelitian = b.id
+        where id_penelitian = #{idPenelitian}
+        order by timestamp_update desc
+    </sql>
+    <select id="getListWorkflowDraft" resultMap="WorkflowPenelitianResultMap">
+        <include refid="getListWorkflowDraftQuery"/>
+    </select>
+    <sql id="getListWorkflowDraftQuery">
+        select wp.*
+        from workflow_penelitian wp
+        left join status_tahap_penelitian stp on stp.id = wp.id_status_tahap_penelitian
+        where is_last is true and (stp.kode_status = 'DRAFT' or stp.kode_status = 'DRAFT_REVISION')
+    </sql>
+</mapper>

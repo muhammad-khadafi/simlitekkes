@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.UserwebHasRoleMapper">
+  <resultMap id="BaseDTOResultMap" type="com.pusilkom.base.dto.UserRoleDTO">
+    <result column="user_id" jdbcType="VARCHAR" property="idUserweb" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <collection property="roles" column="role_id" notNullColumn="user_id"
+                javaType="ArrayList" ofType="com.pusilkom.base.model.Role">
+      <result column="role_id" jdbcType="BIGINT" property="id" />
+      <result column="role_code" jdbcType="VARCHAR" property="roleCode" />
+      <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    </collection>
+  </resultMap>
+
+  <select id="getUserwebHasRole" resultMap="BaseDTOResultMap" parameterType="map">
+  select uhr.id, u.id as user_id, u.username, r.id as role_id,
+  r.role_code, r.role_name from userweb_has_role uhr
+  join userweb u on uhr.id_userweb = u.id
+  join role r on uhr.id_role = r.id
+  order by u.username asc
+
+</select>
+
+  <select id="getUserwebHasRoleByOrganization" resultMap="BaseDTOResultMap" parameterType="map">
+    select uhr.id, u.id as user_id, u.username, r.id as role_id,
+    r.role_code, r.role_name from userweb_has_role uhr
+    join userweb u on uhr.id_userweb = u.id
+    join role r on uhr.id_role = r.id
+    join organisasi o on u.id_organisasi = o.id
+    where u.id_organisasi = #{idOrganization} and o.is_poltekkes = true
+      and r.role_name != 'Super Admin'
+    order by u.username asc
+  </select>
+
+  <select id="checkingRiwayatPenugasan" resultType="Integer" parameterType="map">
+    select count(*) from reviewer_skema rs
+    join peneliti p on rs.id_peneliti = p.id
+    join userweb_has_role uhr on p.id_user = uhr.id_userweb
+    where uhr.id_userweb = #{idUserweb}
+  </select>
+
+    <select id="getUserRoleAll" resultMap="BaseDTOResultMap" parameterType="map">
+        select uhr.id, u.id as user_id, u.username, r.id as role_id,
+        r.role_code, r.role_name from userweb_has_role uhr
+        join userweb u on uhr.id_userweb = u.id
+        join role r on uhr.id_role = r.id
+        <where>
+            <if test="organizationId != 1">
+                u.id_organisasi = #{organizationId}
+            </if>
+            <if test="roleCode != 'ADMIN'">
+                AND u.id not in (select u.id from userweb_has_role uhr
+                join "role" r on uhr.id_role = r.id
+                join userweb u on u.id = uhr.id_userweb
+                where r.role_name = 'Super Admin')
+            </if>
+        </where>
+        order by u.username
+    </select>
+
+</mapper>

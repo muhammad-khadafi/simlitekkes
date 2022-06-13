@@ -1,0 +1,54 @@
+---
+# Jobs for building container images
+# See: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
+.base-build-image:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug-v0.22.0
+    entrypoint: [""]
+  cache: {}
+  variables:
+    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
+  before_script:
+    - export REGISTRY_AUTH=$(printf $REGISTRY_USERNAME:$REGISTRY_PASSWORD | base64)
+    - export CREATED_TIMESTAMP=$(date --utc -Iseconds)
+    - printf "{\"auths\":{\"$REGISTRY_SERVER\":{\"auth\":\"$REGISTRY_AUTH\"}}}" > /kaniko/.docker/config.json
+  script:
+    - /kaniko/executor
+      --build-arg IMAGE_CREATED=${CREATED_TIMESTAMP}
+      --build-arg IMAGE_REVISION=${CI_COMMIT_SHA}
+      --cache
+      --cleanup
+      --context ./
+      --destination registry.pusilkom.com/ppsdm/simlitekkes-backend:${CI_COMMIT_SHORT_SHA}
+      --destination registry.pusilkom.com/ppsdm/simlitekkes-backend:${IMAGE_TAG}
+      --dockerfile Dockerfile
+      --single-snapshot
+  after_script:
+    - unset REGISTRY_AUTH
+    - unset CREATED_TIMESTAMP
+    - rm /kaniko/.docker/config.json
+  retry:
+    max: 2
+    when:
+      - api_failure
+      - runner_system_failure
+      - unknown_failure
+  tags:
+    - docker
+  except:
+    - schedules
+
+lint-image:
+  stage: build
+  image: hadolint/hadolint:v1.17.6-3-g8da4f4e-alpine
+  cache: {}
+  before_script:
+    - hadolint --version
+  script:
+    - find .
+      -name "Dockerfile*" -type f
+      -exec hadolint --config .hadolint.yml {} ';'
+  only:
+    changes:
+      - "Dockerfile*"

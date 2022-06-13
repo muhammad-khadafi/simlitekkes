@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.RoleHasMenuMapper">
+
+  <resultMap id="BaseDTOResultMap" type="com.pusilkom.base.dto.RoleMenuDTO">
+    <result column="role_id" jdbcType="VARCHAR" property="idRole" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <collection property="menus" column="menu_id" notNullColumn="role_id"
+                javaType="ArrayList" ofType="com.pusilkom.base.model.Menu">
+      <result column="menu_id" jdbcType="BIGINT" property="id" />
+      <result column="menu_code" jdbcType="VARCHAR" property="menuCode" />
+      <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    </collection>
+  </resultMap>
+
+  <select id="getRoleHasMenu" resultMap="BaseDTOResultMap">
+    select rhm.id, r.id as role_id, r.role_name, m.id as menu_id,
+    m.menu_code, m.menu_name from role_has_menu rhm
+    join role r on r.id = rhm.id_role
+    join menu m on m.id = rhm.id_menu
+    order by role_name, menu_name asc
+  </select>
+
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.JurnalMapper">
+  <resultMap id="JurnalResultMap" type="com.pusilkom.base.dto.JurnalDTO">
+    <result column="id_output" jdbcType="INTEGER" property="idOutput" />
+    <result column="jurnal" jdbcType="VARCHAR" property="jurnal" />
+    <result column="tahun_terbit" jdbcType="CHAR" property="tahunTerbit" />
+    <result column="volume" jdbcType="VARCHAR" property="volume" />
+    <result column="issn" jdbcType="VARCHAR" property="issn" />
+    <result column="urlOutput" jdbcType="VARCHAR" property="urlOutput" />
+    <result column="nomor" jdbcType="VARCHAR" property="nomor" />
+    <result column="judul" jdbcType="VARCHAR" property="judul" />
+    <result column="pathFile" jdbcType="VARCHAR" property="pathFile" />
+    <result column="namaJenisOutput" jdbcType="VARCHAR" property="namaJenisOutput" />
+    <result column="namaPeranPenulis" jdbcType="VARCHAR" property="namaPeranPenulis" />
+    <result column="idPenulisOutput" jdbcType="VARCHAR" property="idPenulisOutput" />
+    <result column="idPenelitian" jdbcType="INTEGER" property="idPenelitian" />
+    <result column="idPeranPeneliti" jdbcType="INTEGER" property="idPeranPeneliti" />
+  </resultMap>
+
+  <select id="getListJurnalDTO" resultMap="JurnalResultMap">
+    <include refid="Main_Query"/>
+    <include refid="Criteria_Where_Clause"/>
+  </select>
+  <sql id="Main_Query">
+    select j.*, o.url as urlOutput, o.judul as judul, o.path_file as pathFile,
+    jo.nama as namaJenisOutput, ppo.nama as namaPeranPenulis,
+    po.id as idPenulisOutput, o.id_penelitian as idPenelitian, tp.id_peran_peneliti as idPeranPeneliti
+    from jurnal j
+    left join output o on j.id_output = o.id
+    left join jenis_output jo on jo.id = o.id_jenis_output
+    left join penulis_output po on po.id_output = o.id
+    left join peneliti p on p.id = po.id_peneliti
+    left join peran_penulis_output ppo on ppo.id = po.id_output
+    left join tim_peneliti tp on (tp.id_penelitian = o.id_penelitian and tp.id_peneliti = p.id)
+  </sql>
+  <sql id="Criteria_Where_Clause">
+    <where>
+      AND jo.kelompok_output ilike 'jUrNaL'
+      <if test="searchForm.idOutput != null">
+        AND j.id_output = #{searchForm.idOutput}
+      </if>
+      <if test="searchForm.idUser != null">
+        AND p.id_user = #{searchForm.idUser}
+      </if>
+    </where>
+  </sql>
+</mapper>

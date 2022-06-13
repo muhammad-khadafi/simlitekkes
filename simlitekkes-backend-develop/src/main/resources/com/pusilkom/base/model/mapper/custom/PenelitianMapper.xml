@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.PenelitianMapper">
+    <resultMap id="PenelitianResultMap" type="com.pusilkom.base.dto.PenelitianDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="id_topik" jdbcType="INTEGER" property="idTopik" />
+        <result column="id_skema_penelitian" jdbcType="INTEGER" property="idSkemaPenelitian" />
+        <result column="id_rumpun_ilmu" jdbcType="INTEGER" property="idRumpunIlmu" />
+        <result column="id_tingkat_kesiapan_teknologi" jdbcType="INTEGER" property="idTingkatKesiapanTeknologi" />
+        <result column="id_tingkat_kesiapan_teknologi_target" jdbcType="INTEGER" property="idTingkatKesiapanTeknologiTarget" />
+        <result column="judul" jdbcType="VARCHAR" property="judul" />
+        <result column="ringkasan" jdbcType="VARCHAR" property="ringkasan" />
+        <result column="tahun_usulan" jdbcType="CHAR" property="tahunUsulan" />
+        <result column="tahun_mulai_pelaksanaan" jdbcType="CHAR" property="tahunMulaiPelaksanaan" />
+        <result column="tahun_selesai_pelaksanaan" jdbcType="CHAR" property="tahunSelesaiPelaksanaan" />
+        <result column="latar_belakang" jdbcType="VARCHAR" property="latarBelakang" />
+        <result column="tinjauan_pustaka" jdbcType="VARCHAR" property="tinjauanPustaka" />
+        <result column="metode" jdbcType="VARCHAR" property="metode" />
+        <result column="daftar_pustaka" jdbcType="VARCHAR" property="daftarPustaka" />
+        <result column="id_reviewer" jdbcType="INTEGER" property="idReviewer" />
+        <result column="lokasi_penelitian" jdbcType="VARCHAR" property="lokasiPenelitian" />
+        <result column="nama_skema" jdbcType="VARCHAR" property="namaSkema" />
+        <result column="jumlah_usulan" jdbcType="INTEGER" property="jumlahUsulan" />
+        <result column="tahun_pelaksanaan" jdbcType="VARCHAR" property="tahunPelaksanaan" />
+        <result column="pengusul" jdbcType="VARCHAR" property="pengusul" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="kode_status" jdbcType="VARCHAR" property="kodeStatus" />
+        <result column="tahap" jdbcType="VARCHAR" property="tahap" />
+        <result column="namaPeran" jdbcType="VARCHAR" property="namaPeran" />
+        <result column="idStatusTahapPenelitian" jdbcType="INTEGER" property="idStatusTahapPenelitian" />
+        <result column="tanggal_terima" jdbcType="TIMESTAMP" property="tanggalTerima" />
+        <result column="tanggal_deadline" jdbcType="TIMESTAMP" property="tanggalDeadline" />
+    </resultMap>
+
+    <resultMap id="DashboardTableResultMap" type="com.pusilkom.base.dto.DashboardTableDTO">
+        <result column="nama" jdbcType="VARCHAR" property="nama" />
+        <result column="singkatan" jdbcType="VARCHAR" property="singkatan" />
+        <result column="diajukan" jdbcType="INTEGER" property="diajukan" />
+        <result column="dalam_proses" jdbcType="INTEGER" property="dalamProses" />
+        <result column="diterima" jdbcType="INTEGER" property="diterima" />
+        <result column="ditolak" jdbcType="INTEGER" property="ditolak" />
+        <result column="telat" jdbcType="INTEGER" property="telat" />
+    </resultMap>
+
+    <resultMap id="DashboardKelompokTktResultMap" type="com.pusilkom.base.dto.DashboardTableDTO">
+        <result column="nama" jdbcType="VARCHAR" property="nama" />
+        <result column="lv1" jdbcType="INTEGER" property="level1" />
+        <result column="lv2" jdbcType="INTEGER" property="level2" />
+        <result column="lv3" jdbcType="INTEGER" property="level3" />
+        <result column="lv4" jdbcType="INTEGER" property="level4" />
+        <result column="lv5" jdbcType="INTEGER" property="level5" />
+        <result column="lv6" jdbcType="INTEGER" property="level6" />
+        <result column="lv7" jdbcType="INTEGER" property="level7" />
+        <result column="lv8" jdbcType="INTEGER" property="level8" />
+        <result column="lv9" jdbcType="INTEGER" property="level9" />
+    </resultMap>
+
+    <resultMap id="DashboardTopikResultMap" type="com.pusilkom.base.dto.DashboardTableDTO">
+        <result column="tema" jdbcType="VARCHAR" property="nama" />
+        <result column="topik" jdbcType="VARCHAR" property="nama2" />
+        <result column="diajukan" jdbcType="INTEGER" property="diajukan" />
+        <result column="dalam_proses" jdbcType="INTEGER" property="dalamProses" />
+        <result column="diterima" jdbcType="INTEGER" property="diterima" />
+        <result column="ditolak" jdbcType="INTEGER" property="ditolak" />
+        <result column="telat" jdbcType="INTEGER" property="telat" />
+    </resultMap>
+
+    <resultMap id="IdentitasUsulanPreviewResultMap" type="com.pusilkom.base.dto.IdentitasUsulanPreviewDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="judul" jdbcType="VARCHAR" property="judul" />
+        <result column="skema" jdbcType="VARCHAR" property="skema" />
+        <result column="namaKategori" jdbcType="VARCHAR" property="namaKategori" />
+        <result column="namaTkt" jdbcType="VARCHAR" property="namaTkt" />
+        <result column="level_saat_ini" jdbcType="VARCHAR" property="levelSaatIni" />
+        <result column="level_target" jdbcType="VARCHAR" property="levelTarget" />
+        <result column="topik" jdbcType="VARCHAR" property="topik" />
+        <result column="tema" jdbcType="VARCHAR" property="tema" />
+        <result column="rumpun_ilmu" jdbcType="VARCHAR" property="rumpunIlmu" />
+        <result column="lokasi_penelitian" jdbcType="VARCHAR" property="lokasiPenelitian" />
+        <result column="tahun_mulai_pelaksanaan" jdbcType="INTEGER" property="tahunMulaiPelaksanaan" />
+        <result column="tahun_selesai_pelaksanaan" jdbcType="INTEGER" property="tahunSelesaiPelaksanaan" />
+    </resultMap>
+
+    <resultMap id="LaporanAnggaranResultMap" type="com.pusilkom.base.dto.LaporanAnggaranDTO">
+        <result column="peneliti" jdbcType="VARCHAR" property="peneliti" />
+        <result column="nidn" jdbcType="VARCHAR" property="nidn" />
+        <result column="institusi" jdbcType="VARCHAR" property="institusi" />
+        <result column="skema" jdbcType="VARCHAR" property="skema" />
+        <result column="judul_penelitian" jdbcType="VARCHAR" property="judulPenelitian" />
+        <result column="biaya" jdbcType="NUMERIC" property="biaya" />
+        <result column="dana_kontribusi" jdbcType="NUMERIC" property="danaKontribusiMitra" />
+        <result column="barang_kontribusi" jdbcType="VARCHAR" property="barangKontribusiMitra" />
+    </resultMap>
+
+    <select id="getListUsulan" resultMap="PenelitianResultMap">
+        <include refid="getListUsulanQuery"/>
+    </select>
+    <sql id="getListUsulanQuery">
+        select pe.id, pe.judul, pe.tahun_usulan, sp.nama as nama_skema, st.nama as status,
+        wp.timestamp_update as tanggal_terima,
+        wp.timestamp_update + interval '7' day  as tanggal_deadline,
+        st.kode_status
+        from peneliti p
+        inner join tim_peneliti tp on tp.id_peneliti = p.id
+        inner join penelitian pe on pe.id = tp.id_penelitian
+        inner join skema_penelitian sp on sp.id = pe.id_skema_penelitian
+        inner join workflow_penelitian wp on pe.id = wp.id_penelitian
+        inner join status_tahap_penelitian st on wp.id_status_tahap_penelitian = st.id
+        <where>
+            and id_peran_peneliti = 1
+            and p.id_user =  #{idUser}
+            and wp.is_last = true
+            and st.kode_status <if test="!isEnd"> not </if> in ('ACCEPTED', 'REJECTED', 'DEADLINE_PASSED')
+        </where>
+        order by tahun_usulan desc
+    </sql>
+    <select id="getRekap" resultMap="PenelitianResultMap">
+        <include refid="getRekapQuery" />
+    </select>
+    <sql id="getRekapQuery">
+        select p.id_skema_penelitian, s.nama as nama_skema, tahun_usulan, 
+        tahun_mulai_pelaksanaan, tahun_selesai_pelaksanaan,
+        count(p.id) as jumlah_usulan
+        from penelitian p
+        inner join skema_penelitian s on p.id_skema_penelitian = s.id
+        inner join tim_peneliti t on p.id = t.id_penelitian
+        inner join peneliti d on t.id_peneliti = d.id
+        inner join workflow_penelitian w on p.id = w.id_penelitian
+        inner join status_tahap_penelitian st on w.id_status_tahap_penelitian = st.id
+        inner join tahap_penelitian h on st.id_tahap_penelitian = h.id
+        <where>
+            AND id_peran_peneliti = 1
+            and is_last = true
+            <if test="idOrganisasi != 1">
+                AND t.id_organisasi = #{idOrganisasi} 
+            </if>
+            and id_status_tahap_penelitian in ( select id from status_tahap_penelitian where kode_status in ('ACCEPTED', 'REJECTED', 'DEADLINE_PASSED') )
+        </where>
+        group by p.id_skema_penelitian, s.nama, tahun_usulan, tahun_mulai_pelaksanaan, tahun_selesai_pelaksanaan
+        order by tahun_usulan desc
+    </sql>
+    <select id="getDaftarBySkemaTahun" resultMap="PenelitianResultMap">
+        <include refid="getDaftarBySkemaTahunQuery" />
+    </select>
+    <sql id="getDaftarBySkemaTahunQuery">
+        select p.id, d.nama as pengusul, p.judul, tahun_mulai_pelaksanaan, tahun_selesai_pelaksanaan, st.nama as status, h.nama as tahap 
+        from penelitian p
+        inner join skema_penelitian s on p.id_skema_penelitian = s.id
+        inner join tim_peneliti t on p.id = t.id_penelitian
+        inner join peneliti d on t.id_peneliti = d.id
+        inner join workflow_penelitian w on p.id = w.id_penelitian
+        inner join status_tahap_penelitian st on w.id_status_tahap_penelitian = st.id
+        inner join tahap_penelitian h on st.id_tahap_penelitian = h.id
+        <where>
+            and id_peran_peneliti = 1
+            and is_last = true
+            <if test="idOrganisasi != 1">
+                and t.id_organisasi = #{idOrganisasi}
+            </if>
+            <if test='tahunUsulan.equals("0")'>    
+                and p.tahun_usulan is null
+            </if>
+            <if test='!tahunUsulan.equals("0")'>    
+                and p.tahun_usulan = #{tahunUsulan}
+            </if>
+            <if test='tahunMulai.equals("0")'>    
+                and p.tahun_mulai_pelaksanaan is null
+            </if>
+            <if test='!tahunMulai.equals("0")'>    
+                and p.tahun_mulai_pelaksanaan = #{tahunMulai}
+            </if>
+            <if test='tahunSelesai.equals("0")'>    
+                and p.tahun_selesai_pelaksanaan is null
+            </if>
+            <if test='!tahunSelesai.equals("0")'>    
+                and p.tahun_selesai_pelaksanaan = #{tahunSelesai}
+            </if>
+            and s.id = #{idSkemaPenelitian}
+            and id_status_tahap_penelitian in ( select id from status_tahap_penelitian where kode_status in ('ACCEPTED', 'REJECTED', 'DEADLINE_PASSED') )
+        </where> 
+        order by p.tahun_usulan desc
+    </sql>
+    <select id="getListByIdPeneliti" resultMap="PenelitianResultMap">
+        <include refid="getListByIdPenelitiQuery" />
+    </select>
+    <sql id="getListByIdPenelitiQuery">
+        select a.judul , a.tahun_mulai_pelaksanaan , a.tahun_selesai_pelaksanaan , d.nama as namaPeran
+        from penelitian a
+        inner join tim_peneliti b on a.id = b.id_penelitian
+        inner join peneliti c on b.id_peneliti = c.id
+        inner join peran_peneliti d on b.id_peran_peneliti = d.id
+        inner join workflow_penelitian e on a.id = e.id_penelitian
+        where c.id_user = #{idUser}
+        and id_status_tahap_penelitian = (select id from status_tahap_penelitian where kode_status = 'ACCEPTED')
+    </sql>
+    <sql id="getDataValidasiIsPenelitianSubmittedD14RQuery">
+        select * from penelitian b
+        inner join tim_peneliti c on b.id = c.id_penelitian
+        inner join workflow_penelitian d on b.id =d.id_penelitian
+        where id_organisasi = #{idOrganisasi}
+        and tahun_usulan = #{tahun}
+        and is_last = true
+        and id_status_tahap_penelitian >= (
+        select id from status_tahap_penelitian where kode_status =  'SUBMITTED'
+        ) and b.id = #{idPenelitian}
+    </sql>
+    <select id="getDataValidasiIsPenelitianSubmittedD14R" resultMap="PenelitianResultMap">
+        <include refid="getDataValidasiIsPenelitianSubmittedD14RQuery" />
+    </select>
+    <sql id="getDataValidasiIsPenelitianSubmittedF14RQuery">
+        select * from penelitian b
+        inner join tim_peneliti c on b.id = c.id_penelitian
+        inner join workflow_penelitian d on b.id =d.id_penelitian
+        <where>
+            <if test='!tahun.equals("0")'>
+                and tahun_usulan = #{tahun}
+            </if>            
+            and is_last = true
+            and id_status_tahap_penelitian >= (
+            select id from status_tahap_penelitian where kode_status like 'SUBMITTED'
+            ) and b.id = #{idPenelitian}
+        </where> 
+    </sql>
+    <select id="getDataValidasiIsPenelitianSubmittedF14R" resultMap="PenelitianResultMap">
+        <include refid="getDataValidasiIsPenelitianSubmittedF14RQuery" />
+    </select>
+    <sql id="getDataValidasiIsPenelitianNotSubmittedH14WQuery">
+        select * from penelitian a
+        inner join tim_peneliti b on a.id = b.id_penelitian
+        inner join peneliti c on b.id_peneliti = c.id
+        inner join workflow_penelitian d on a.id = d.id_penelitian
+        where id_user = #{userid}
+        and id_peran_peneliti = 1
+        and is_last = true
+        and id_status_tahap_penelitian in (
+        select id from status_tahap_penelitian
+        where kode_status like 'DRAFT%'
+        ) and a.id = #{idPenelitian}
+    </sql>
+    <select id="getDataValidasiIsPenelitianNotSubmittedH14W" resultMap="PenelitianResultMap">
+        <include refid="getDataValidasiIsPenelitianNotSubmittedH14WQuery" />
+    </select>
+    <sql id="getDataValidasiIsPenelitianAssignedI14RQuery">
+        select * from penelitian a
+        inner join reviewer_skema b on a.id_reviewer_skema = b.id
+        inner join peneliti c on b.id_peneliti = c.id 
+        where id_user = #{idUser)
+        and a.tahun_usulan = #{tahunUsulan}
+    </sql>
+    <select id="getDataValidasiIsPenelitianAssignedI14R" resultMap="PenelitianResultMap">
+        <include refid="getDataValidasiIsPenelitianAssignedI14RQuery" />
+    </select>
+    <sql id="getDataValidasiIsOwnPenelitianH14RQuery">
+        select * from penelitian a 
+        inner join tim_peneliti b on a.id = b.id_penelitian
+        inner join peneliti c on b.id_peneliti = c.id
+        inner join workflow_penelitian d on a.id = d.id_penelitian 
+        where id_user = #{idUser}
+        and id_peran_peneliti = 1 
+        and is_last = true
+        and a.id = #{idPenelitian}
+    </sql>
+    <select id="getDataValidasiIsOwnPenelitianH14R" resultMap="PenelitianResultMap">
+        <include refid="getDataValidasiIsOwnPenelitianH14RQuery" />
+    </select>
+    <sql id="getPenelitianDetailStatusByIdQuery">
+        select *, stp.kode_status as status, stp.id as idStatusTahapPenelitian
+        from penelitian p
+        left join workflow_penelitian wp on wp.id_penelitian = p.id and wp.is_last is true
+        left join status_tahap_penelitian stp on stp.id = wp.id_status_tahap_penelitian
+        where p.id = #{idPenelitian}
+        order by wp.id_status_tahap_penelitian desc
+    </sql>
+    <select id="getPenelitianDetailStatusById" resultMap="PenelitianResultMap">
+        <include refid="getPenelitianDetailStatusByIdQuery" />
+    </select>
+    <select id="getDataValidasiOutputPenelitianPeranKetuaH16W" resultMap="PenelitianResultMap">
+        <include refid="getDataValidasiOutputPenelitianPeranKetuaH16WQuery" />
+    </select>
+    <sql id="getDataValidasiOutputPenelitianPeranKetuaH16WQuery">
+        select * from output a
+        inner join penulis_output b on a.id = b.id_output
+        inner join peneliti c on b.id_peneliti = c.id
+        inner join penelitian d on a.id_penelitian = d.id
+        inner join tim_peneliti e on d.id  = e.id_penelitian
+        where true
+        and a.id = #{idOutput}
+        and id_user = #{idUser}
+        and e.id_peran_peneliti = 1
+        and b.id_peneliti = e.id_peneliti
+        order by extract(YEAR from tanggal_publikasi) desc
+    </sql>
+    <select id="getDataValidasiI14W" resultMap="PenelitianResultMap">
+        <include refid="getDataValidasiI14WQuery" />
+    </select>
+    <sql id="getDataValidasiI14WQuery">
+        select * from penelitian a
+        inner join reviewer_skema b on a.id_reviewer_skema = b.id
+        inner join peneliti c on b.id_peneliti = c.id
+        where c.id_user = #{idUser}
+        and a.id = #{idPenelitian}
+    </sql>
+
+    <select id="getProposalPerSkema" parameterType="map" resultMap="DashboardTableResultMap">
+        select x.id, x.nama, x.singkatan,
+        case when y.diajukan is null then 0 else y.diajukan end as diajukan,
+        case when y.dalam_proses is null then 0 else y.dalam_proses end as dalam_proses,
+        case when y.diterima is null then 0 else y.diterima end as diterima,
+        case when y.ditolak is null then 0 else y.ditolak end as ditolak,
+        case when y.telat is null then 0 else y.telat end as telat
+        from skema_penelitian x
+        left join (
+        select id_skema_penelitian,
+        sum(case when kode_status is not null then 1 else 0 end) as diajukan,
+        sum(case when kode_status not in ('ACCEPTED','REJECTED','DEADLINE_PASSED') then 1 else 0 end) as dalam_proses,
+        sum(case when kode_status = 'ACCEPTED' then 1 else 0 end) as diterima,
+        sum(case when kode_status = 'REJECTED' then 1 else 0 end) as ditolak,
+        sum(case when kode_status = 'DEADLINE_PASSED' then 1 else 0 end) as telat
+        from penelitian a
+        <if test="idOrganisasi != 1">
+            inner join (
+            select id_penelitian from tim_peneliti where id_peran_peneliti = 1 and id_organisasi = #{idOrganisasi}
+            ) b on a.id = b.id_penelitian
+        </if>
+        inner join workflow_penelitian c on a.id = c.id_penelitian
+        inner join status_tahap_penelitian d on c.id_status_tahap_penelitian = d.id
+        where true
+        and tahun_usulan = #{tahunUsulan}
+        and is_last = true
+        group by id_skema_penelitian
+        ) y on x.id = y.id_skema_penelitian
+        order by x.nama
+    </select>
+
+    <select id="getProposalPerKelompokTkt" parameterType="map" resultMap="DashboardKelompokTktResultMap">
+        select x.id, x.nama,
+        case when y.lv1 is null then 0 else y.lv1 end as lv1,
+        case when y.lv2 is null then 0 else y.lv2 end as lv2,
+        case when y.lv3 is null then 0 else y.lv3 end as lv3,
+        case when y.lv4 is null then 0 else y.lv4 end as lv4,
+        case when y.lv5 is null then 0 else y.lv5 end as lv5,
+        case when y.lv6 is null then 0 else y.lv6 end as lv6,
+        case when y.lv7 is null then 0 else y.lv7 end as lv7,
+        case when y.lv8 is null then 0 else y.lv8 end as lv8,
+        case when y.lv9 is null then 0 else y.lv9 end as lv9
+        from kelompok_tkt x
+        left join (
+        select e.id_kelompok_tkt,
+        sum(case when level = 1 then 1 else 0 end) as lv1,
+        sum(case when level = 2 then 1 else 0 end) as lv2,
+        sum(case when level = 3 then 1 else 0 end) as lv3,
+        sum(case when level = 4 then 1 else 0 end) as lv4 ,
+        sum(case when level = 5 then 1 else 0 end) as lv5 ,
+        sum(case when level = 6 then 1 else 0 end) as lv6,
+        sum(case when level = 7 then 1 else 0 end) as lv7,
+        sum(case when level = 8 then 1 else 0 end) as lv8,
+        sum(case when level = 9 then 1 else 0 end) as lv9 ,
+        sum(case when level = 10 then 1 else 0 end) as lv10
+        from penelitian a
+        inner join (
+        select id_penelitian from tim_peneliti where id_peran_peneliti = 1
+        <if test="idOrganisasi != 1">
+            and id_organisasi = #{idOrganisasi}
+        </if>
+        ) b on a.id = b.id_penelitian
+        inner join workflow_penelitian c on a.id = c.id_penelitian
+        inner join status_tahap_penelitian d on c.id_status_tahap_penelitian = d.id
+        inner join tingkat_kesiapan_teknologi e on a.id_tingkat_kesiapan_teknologi = e.id
+        where true
+        and tahun_usulan = #{tahunUsulan}
+        group by e.id_kelompok_tkt
+        ) y on x.id = y.id_kelompok_tkt
+        order by x.id, x.nama
+    </select>
+
+    <select id="getProposalPerTopik" parameterType="map" resultMap="DashboardTopikResultMap">
+        select z.nama as tema, x.nama as topik,
+        case when y.diajukan is null then 0 else y.diajukan end as diajukan,
+        case when y.dalam_proses is null then 0 else y.dalam_proses end as dalam_proses,
+        case when y.diterima is null then 0 else y.diterima end as diterima,
+        case when y.ditolak is null then 0 else y.ditolak end as ditolak,
+        case when y.telat is null then 0 else y.telat end as telat
+        from topik x
+        inner join tema z on z.id = x.id_tema
+        left join (
+        select id_topik,
+        sum(case when kode_status is not null then 1 else 0 end) as diajukan,
+        sum(case when kode_status not in ('ACCEPTED','REJECTED','DEADLINE_PASSED') then 1 else 0 end) as dalam_proses,
+        sum(case when kode_status = 'ACCEPTED' then 1 else 0 end) as diterima,
+        sum(case when kode_status = 'REJECTED' then 1 else 0 end) as ditolak,
+        sum(case when kode_status = 'DEADLINE_PASSED' then 1 else 0 end) as telat
+        from penelitian a
+        inner join (
+        select id_penelitian from tim_peneliti where id_peran_peneliti = 1
+        <if test="idOrganisasi != 1">
+            and id_organisasi = #{idOrganisasi}
+        </if>
+        ) b on a.id = b.id_penelitian
+        inner join workflow_penelitian c on a.id = c.id_penelitian
+        inner join status_tahap_penelitian d on c.id_status_tahap_penelitian = d.id
+        where true
+        and tahun_usulan = #{tahunUsulan}
+        group by id_topik
+        ) y on x.id = y.id_topik
+        order by z.nama, x.nama
+    </select>
+
+    <select id="getProposalPerTema" parameterType="map" resultMap="DashboardTableResultMap">
+        select x.nama,
+        case when y.diajukan is null then 0 else y.diajukan end as diajukan,
+        case when y.dalam_proses is null then 0 else y.dalam_proses end as dalam_proses,
+        case when y.diterima is null then 0 else y.diterima end as diterima,
+        case when y.ditolak is null then 0 else y.ditolak end as ditolak,
+        case when y.telat is null then 0 else y.telat end as telat
+        from tema x
+        left join (
+        select id_tema,
+        sum(case when kode_status is not null then 1 else 0 end) as diajukan,
+        sum(case when kode_status not in ('ACCEPTED', 'REJECTED','DEADLINE_PASSED') then 1 else 0 end) as dalam_proses,
+        sum(case when kode_status = 'ACCEPTED' then 1 else 0 end) as diterima,
+        sum(case when kode_status = 'REJECTED' then 1 else 0 end) as ditolak,
+        sum(case when kode_status = 'DEADLINE_PASSED' then 1 else 0 end) as telat
+        from penelitian a
+        inner join topik e on a .id_topik = e.id
+        inner join (
+        select id_penelitian from tim_peneliti where id_peran_peneliti = 1
+        <if test="idOrganisasi != 1">
+            and id_organisasi = #{idOrganisasi}
+        </if>
+        ) b on a.id = b.id_penelitian
+        inner join workflow_penelitian c on a.id = c.id_penelitian
+        inner join status_tahap_penelitian d on c.id_status_tahap_penelitian = d.id
+        where tahun_usulan = #{tahunUsulan}
+        group by id_tema
+        ) y on x.id = y.id_tema
+        order by x.nama
+    </select>
+
+    <select id="getIdentitasUsulanPreview" resultMap="IdentitasUsulanPreviewResultMap">
+        <include refid="getIdentitasUsulanPreviewQuery" />
+    </select>
+    <sql id="getIdentitasUsulanPreviewQuery">
+        select a.id, judul, b.singkatan as skema, c.nama as namaKategori, f.nama as namaTkt, tktawal.level as level_saat_ini,
+        tkttarget.level as level_target, g.nama as topik, h.nama as tema,
+        lv1.nama || ' / ' || lv2.nama || ' / ' || lv3.nama as rumpun_ilmu, lokasi_penelitian, a.tahun_mulai_pelaksanaan, a.tahun_selesai_pelaksanaan
+        from
+        penelitian a
+        inner join skema_penelitian b on a.id_skema_penelitian = b.id
+        inner join kategori_skema_penelitian c on b.id_kategori_skema_penelitian = c.id
+        inner join tingkat_kesiapan_teknologi tktawal on a.id_tingkat_kesiapan_teknologi = tktawal.id
+        inner join tingkat_kesiapan_teknologi tkttarget on a.id_tingkat_kesiapan_teknologi_target = tkttarget.id
+        inner join kelompok_tkt f on tktawal.id_kelompok_tkt = f.id
+        inner join topik g on a.id_topik = g.id
+        inner join tema h on g.id_tema = h.id
+        inner join rumpun_ilmu lv3 on a.id_rumpun_ilmu = lv3.id
+        inner join rumpun_ilmu lv2 on lv3.id_parent_rumpun_ilmu = lv2.id
+        inner join rumpun_ilmu lv1 on lv2.id_parent_rumpun_ilmu = lv1.id
+        where true
+        and a.id = #{idPenelitian}
+    </sql>
+
+    <select id="getTahunUsulanForLaporanAnggaran" parameterType="map" resultMap="PenelitianResultMap">
+        select distinct tahun_usulan
+        from penelitian a
+        inner join (select * from tim_peneliti where id_peran_peneliti  = 1) b on a.id = b.id_penelitian
+        inner join organisasi c on b.id_organisasi = c.id
+        where tahun_usulan is not null
+        <if test="idOrganisasi != 1">
+            and id_organisasi = #{idOrganisasi}
+        </if>
+        order by tahun_usulan desc
+    </select>
+
+    <select id="getLaporanAnggaran" parameterType="map" resultMap="LaporanAnggaranResultMap">
+        select a.tahun_usulan, e.nidn,
+        trim(COALESCE(e.gelar_depan,'') || ' ' || e.nama || ' ' || COALESCE(e.gelar_belakang,'')) as peneliti,
+        c.nama as institusi,  d.nama as skema,  a.judul as judul_penelitian,
+        f.total_rab as biaya, total_dana_kontribusi as dana_kontribusi, barang_kontribusi
+        from (
+        select p.id, p.id_skema_penelitian, tahun_usulan, judul
+        from penelitian p
+        inner join workflow_penelitian w on p.id = w.id_penelitian
+        inner join status_tahap_penelitian s on w.id_status_tahap_penelitian = s.id
+        where true
+        and tahun_usulan = #{tahunUsulan}
+        and kode_status = 'ACCEPTED'
+        ) a
+        inner join (select * from tim_peneliti where id_peran_peneliti  = 1) b on a.id = b.id_penelitian
+        inner join peneliti e on b.id_peneliti = e.id
+        inner join organisasi c on b.id_organisasi = c.id
+        inner join skema_penelitian d on a.id_skema_penelitian = d.id
+        left join (
+        select id_penelitian, sum(volume * biaya_satuan) as total_rab from rencana_anggaran group by id_penelitian
+        ) f on a.id = f.id_penelitian
+        left join (
+        select id_penelitian, sum(jumlah_kontribusi) as total_dana_kontribusi, string_agg(barang_kontribusi, ', ')  as barang_kontribusi
+        from mitra_penelitian h
+        inner join kontribusi_mitra i on h.id = i.id_mitra_penelitian
+        group by id_penelitian
+        ) g  on a.id = g.id_penelitian
+        where true
+        <if test="idOrganisasi != 1">
+            and c.id = #{idOrganisasi}
+        </if>
+    </select>
+</mapper>

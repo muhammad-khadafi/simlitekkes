@@ -1,0 +1,13 @@
+---
+version: "3"
+services:
+  backend:
+    env_file:
+      - .env-prod
+    ports:
+      - "10041:8001"
+  db:
+    env_file:
+      - .env-prod
+    ports:
+      - "10042:5432"

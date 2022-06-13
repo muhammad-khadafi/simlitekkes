@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.MenuMapper">
+  <resultMap id="MenuResultMap" type="com.pusilkom.base.model.Menu">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="id_parent" jdbcType="BIGINT" property="idParent" />
+    <result column="menu_code" jdbcType="VARCHAR" property="menuCode" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="menu_order" jdbcType="INTEGER" property="menuOrder" />
+    <result column="is_displayed" jdbcType="BIT" property="isDisplayed" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="router_to" jdbcType="VARCHAR" property="routerTo" />
+  </resultMap>
+
+  <resultMap id="MenuDTOResultMap" type="com.pusilkom.base.dto.MenuDTO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="id_parent" jdbcType="BIGINT" property="idParent" />
+    <result column="menu_parent_name" jdbcType="VARCHAR" property="menuParentName" />
+    <result column="menu_code" jdbcType="VARCHAR" property="menuCode" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="menu_order" jdbcType="INTEGER" property="menuOrder" />
+    <result column="is_displayed" jdbcType="BIT" property="isDisplayed" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="router_to" jdbcType="VARCHAR" property="routerTo" />
+  </resultMap>
+
+  <select id="getMenuList" resultMap="MenuDTOResultMap">
+    select child.*, parent.menu_name as menu_parent_name
+    from menu as child
+    left join menu as parent on child.id_parent = parent.id
+    order by menu_code asc
+  </select>
+
+  <select id="getMenuParentList" parameterType="map" resultMap="MenuResultMap">
+    select m.* from role_has_menu rhm
+    join role r on rhm.id_role = r.id
+    join menu m on rhm.id_menu = m.id
+    where r.role_code=#{role} and m.id_parent is null
+      and m.is_displayed = true
+    order by m.menu_order asc
+  </select>
+
+  <select id="getMenuChildList" parameterType="map" resultMap="MenuResultMap">
+    select m.* from role_has_menu rhm
+    join role r on rhm.id_role = r.id
+    join menu m on rhm.id_menu = m.id
+    where r.role_code=#{role} and m.id_parent = #{id}
+      and m.is_displayed = true
+    order by m.menu_order asc
+  </select>
+
+  <select id="getMenusByRoleId" parameterType="map" resultMap="MenuResultMap">
+    select m.menu_name, m.menu_code, m.router_to from role_has_menu rhm
+    join menu m on rhm.id_menu = m.id
+    where m.router_to != '' and rhm.id_role = #{roleId}
+    order by router_to
+  </select>
+
+
+
+</mapper>

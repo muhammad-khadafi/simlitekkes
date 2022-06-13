@@ -1,0 +1,29 @@
+---
+dump-db:
+  image: postgres:12-alpine
+  stage: .post
+  variables:
+    GIT_STRATEGY: none
+    NOW: $(date --utc -Iminutes)
+  cache: {}
+  dependencies: []
+  before_script:
+    - echo "${DB_HOST}:${DB_PORT}:${DB_NAME}:${DB_USER}:${DB_PASSWORD}" > ~/.pgpass
+    - chmod 0600 ~/.pgpass
+  script:
+    - mkdir -p dump/
+    - pg_dump -d ${DB_NAME} -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER}
+      --no-password --schema-only --create
+      --file=dump/schema-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}-$(date --utc -Ihours).sql
+    - pg_dump -d ${DB_NAME} -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER}
+      --no-password --data-only --blobs --disable-triggers
+      --file=dump/data-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}-$(date --utc -Ihours).sql
+  after_script:
+    - rm ~/.pgpass
+  artifacts:
+    name: "db-dump-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
+    expire_in: 1 week
+    paths:
+      - dump/
+  only:
+    - schedules

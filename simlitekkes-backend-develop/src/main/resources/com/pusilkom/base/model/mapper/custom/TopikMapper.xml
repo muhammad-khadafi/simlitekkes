@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.TopikMapper">
+  <resultMap id="TopikResultMap" type="com.pusilkom.base.dto.TopikDTO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="id_tema" jdbcType="INTEGER" property="idTema" />
+    <result column="nama" jdbcType="VARCHAR" property="nama" />
+    <result column="is_active" jdbcType="BIT" property="isActive" />
+    <result column="isActiveStr" jdbcType="VARCHAR" property="isActiveStr" />
+  </resultMap>
+
+  <select id="getListTopikDTO" resultMap="TopikResultMap">
+    <include refid="Main_Query"/>
+    <include refid="Criteria_Where_Clause"/>
+  </select>
+  <sql id="Main_Query">
+    select t.id, t.id_tema, t.nama, t.is_active,
+    case when t.is_active is true then 'Aktif' else 'Tidak Aktif' end as isActiveStr
+    from topik t
+    left join tema tm on tm.id = t.id_tema
+  </sql>
+  <sql id="Criteria_Where_Clause">
+    <where>
+      <if test="searchForm.id != null">
+        AND t.id = #{searchForm.id}
+      </if>
+      <if test="searchForm.idTema != null">
+        AND t.id_tema = #{searchForm.idTema}
+      </if>
+    </where>
+  </sql>
+</mapper>

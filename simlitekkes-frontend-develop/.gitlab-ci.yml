@@ -1,0 +1,138 @@
+---
+include:
+  - local: .gitlab/ci/global.gitlab-ci.yml
+  - local: .gitlab/ci/image.gitlab-ci.yml
+  - local: .gitlab/ci/nodejs.gitlab-ci.yml
+
+.template-only-upstream-master:
+  only: &only-upstream-master
+    refs:
+      - master@ppsdm/simlitekkes-frontend
+
+.template-only-upstream-develop:
+  only: &only-upstream-develop
+    refs:
+      - develop@ppsdm/simlitekkes-frontend
+
+.template-only-upstream-testing:
+  only: &only-upstream-testing
+    refs:
+      - testing@ppsdm/simlitekkes-frontend
+
+.template-only-branches:
+  only: &only-branches
+    refs:
+      - branches
+
+.trigger-deploy_template:
+  image: alpine:3.11
+  stage: deploy
+  variables:
+    ENV_TYPE: develop
+  before_script:
+    - apk update && apk add --no-cache curl
+  script:
+    - curl --request POST
+      --form token=${TRIGGER_TOKEN}
+      --form ref=master
+      --form "variables[ENV_TYPE]=${ENV_TYPE}"
+      --form "variables[SERVICE_TYPE]=frontend"
+      https://gitlab.pusilkom.com/api/v4/projects/40/trigger/pipeline
+  allow_failure: true
+
+build:development:
+  extends: .base-build
+  variables:
+    BUILD_MODE: development
+    VUE_APP_BACKEND_URL: ${DEVELOP_BACKEND_URL}
+  only: *only-branches
+  except:
+    refs:
+      - develop
+      - testing
+      - master
+
+# Disabled due to no test suite and to speed-up pipeline
+.build:production:
+  extends: .base-build
+  variables:
+    BUILD_MODE: production
+    VUE_APP_BACKEND_URL: ${PRODUCTION_BACKEND_URL}
+  only:
+    refs:
+      - master
+
+create-base-image:develop:
+  extends: .base-create-base-image
+  variables:
+    IMAGE_TAG: develop
+  only: *only-upstream-develop
+
+build-image:develop:
+  extends: .base-build-image
+  variables:
+    BUILD_MODE: development
+    IMAGE_TAG: develop
+    VUE_APP_BACKEND_URL: ${DEVELOP_BACKEND_URL}
+  only: *only-upstream-develop
+
+create-base-image:testing:
+  extends: .base-create-base-image
+  variables:
+    IMAGE_TAG: testing
+  only: *only-upstream-testing
+
+build-image:testing:
+  extends: .base-build-image
+  variables:
+    BUILD_MODE: production
+    IMAGE_TAG: testing
+    VUE_APP_BACKEND_URL: ${TESTING_BACKEND_URL}
+  only: *only-upstream-testing
+
+create-base-image:production:
+  extends: .base-create-base-image
+  variables:
+    IMAGE_TAG: latest
+  only: *only-upstream-master
+
+build-image:production:
+  extends: .base-build-image
+  variables:
+    BUILD_MODE: production
+    IMAGE_TAG: latest
+    VUE_APP_BACKEND_URL: ${PRODUCTION_BACKEND_URL}
+  only: *only-upstream-master
+
+sonarscan:
+  stage: post-deploy
+  image: addianto/sonar-scanner-cli:latest
+  script:
+    - sonar-scanner
+      -Dsonar.host.url=${SONAR_HOST_URL}
+      -Dsonar.login=${SONAR_TOKEN}
+      -Dsonar.branch.name=${CI_COMMIT_REF_NAME}
+  only:
+    refs:
+      - develop@ppsdm/simlitekkes-frontend
+      - testing@ppsdm/simlitekkes-frontend
+      - master@ppsdm/simlitekkes-frontend
+
+trigger-deploy:develop:
+  extends: .trigger-deploy_template
+  variables:
+    ENV_TYPE: develop
+  only: *only-upstream-develop
+
+trigger-deploy:testing:
+  extends: .trigger-deploy_template
+  variables:
+    ENV_TYPE: testing
+  only: *only-upstream-testing
+
+trigger-deploy:production:
+  extends: .trigger-deploy_template
+  variables:
+    ENV_TYPE: production
+  only: *only-upstream-master
+  when: manual

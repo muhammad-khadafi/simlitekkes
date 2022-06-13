@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.base.model.mapper.TargetOutputPenelitianMapper">
+    <resultMap id="TargetOutputPenelitianResultMap" type="com.pusilkom.base.dto.TargetOutputPenelitianDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="id_penelitian" jdbcType="INTEGER" property="idPenelitian" />
+        <result column="id_jenis_output" jdbcType="INTEGER" property="idJenisOutput" />
+        <result column="tahun_target" jdbcType="VARCHAR" property="tahunTarget" />
+        <result column="tahun_realisasi" jdbcType="VARCHAR" property="tahunRealisasi" />
+        <result column="is_wajib" jdbcType="BIT" property="isWajib" />
+        <result column="is_tambahan" jdbcType="BIT" property="isTambahan" />
+        <result column="nama" jdbcType="VARCHAR" property="nama" />
+    </resultMap>
+    <select id="getListTargetOutputPenelitian" resultMap="TargetOutputPenelitianResultMap">
+        <include refid="getListTargetOutputPenelitianQuery"/>
+    </select>
+    <sql id="getListTargetOutputPenelitianQuery">
+        select * from
+        target_output_penelitian a
+        inner join jenis_output b on a.id_jenis_output = b.id
+        where id_penelitian = #{idPenelitian}
+    </sql>
+</mapper>
